@@ -19,20 +19,9 @@ Plug 'kien/ctrlp.vim'
 Plug 'rking/ag.vim'
 Plug 'bling/vim-airline'
 Plug 'yegappan/greplace'
-
-" language server
+Plug 'sheerun/vim-polyglot'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-if is_windows
-  Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'powershell -executionpolicy bypass -File install.ps1',
-    \ }
-else
-  Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-endif
+Plug 'w0rp/ale'
 
 " colors
 Plug 'chriskempson/base16-vim'
@@ -46,7 +35,7 @@ call plug#end()
 filetype plugin indent on
 
 " colorsss
-"set termguicolors 		  " true color 
+"set termguicolors                " true color
 "colorscheme paramount
 colorscheme base16-ocean
 set background=dark
@@ -57,7 +46,7 @@ set hidden
 " Show programming syntax
 syntax on
 
-" Show lines 
+" Show lines
 set number
 
 " show spaces / tabs
@@ -70,12 +59,12 @@ set softtabstop=2 shiftwidth=2 expandtab
 set autoread
 
 "Copy indent from current line when starting a new line
-set autoindent 
+set autoindent
 "when we autoindent, backspace will delete the entire tab width, not just individual spaces
-set smarttab 
+set smarttab
 set smartindent
 
-" Always show status 
+" Always show status
 set laststatus=2
 
 "searching
@@ -135,19 +124,23 @@ let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|virtualenv)|(\.(swp
 set grepprg=ag
 let g:grep_cmd_opts = '--line-numbers --noheading'
 
-" Language Server
-" npm -g i javascript-typescript-langserver
-" https://github.com/palantir/python-language-server
-let g:LanguageClient_autoStart = 1
-set signcolumn=yes
-let g:LanguageClient_serverCommands = {
-    \ 'typescript': ['$APPDATA/npm/javascript-typescript-stdio.cmd'],
-    \ 'javascript': ['$APPDATA/npm/javascript-typescript-stdio.cmd'], 
-    \ 'python': ['python-language-stdio'], 
-    \ }
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+" Language Server (ALE)
+if is_windows
+  let $PATH .= expand(';$APPDATA/npm')
 
-" Deoplete 
+endif
+let g:airline#extensions#ale#enabled = 1
+let g:ale_sign_column_always = 1
+let g:ale_lint_on_text_changed = 0
+let g:ale_completion_enabled = 1
+let g:ale_linters = {
+\ 'javascript': ['eslint'],
+\ 'python': ['pylint']
+\ }
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\}
+
+
+" Deoplete
 let g:deoplete#enable_at_startup = 1
