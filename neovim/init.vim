@@ -35,9 +35,12 @@ call plug#end()
 filetype plugin indent on
 
 " colorsss
-"set termguicolors                " true color
-"colorscheme paramount
-colorscheme base16-ocean
+if is_windows
+  set termguicolors                " true color
+  colorscheme base16-ocean
+else
+  colorscheme paramount
+endif
 set background=dark
 
 " Required for operations modifying multiple buffers like rename.
