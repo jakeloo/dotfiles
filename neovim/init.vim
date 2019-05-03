@@ -2,8 +2,10 @@ let is_windows=has("win32")
 if is_windows
   let g:python3_host_prog = 'C:\Windows\py.exe'
   if empty(glob('$LOCALAPPDATA\nvim\autoload\plug.vim'))
-    silent ! powershell (md "$env:LOCALAPPDATA\nvim\autoload")
-    silent ! powershell (New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim', $env:LOCALAPPDATA + '\nvim\autoload\plug.vim')
+    silent !powershell (md "$env:LOCALAPPDATA\nvim\autoload")
+    silent !powershell (New-Object Net.WebClient).DownloadFile(
+          \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim', 
+          \ $env:LOCALAPPDATA + '\nvim\autoload\plug.vim')
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif
   call plug#begin('$LOCALAPPDATA\nvim\plugged')
@@ -43,9 +45,9 @@ filetype plugin indent on
 " colorsss
 if is_windows
   set termguicolors                " true color
-  colorscheme base16-ocean
+  silent! colorscheme base16-ocean
 else
-  colorscheme paramount
+  silent! colorscheme paramount
 endif
 set background=dark
 
