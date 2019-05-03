@@ -1,8 +1,14 @@
 let is_windows=has("win32")
 if is_windows
   let g:python3_host_prog = 'C:\Windows\py.exe'
-  call plug#begin('~\AppData\Local\nvim\plugged')
+  if empty(glob('$LOCALAPPDATA\nvim\autoload\plug.vim'))
+    silent ! powershell (md "$env:LOCALAPPDATA\nvim\autoload")
+    silent ! powershell (New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim', $env:LOCALAPPDATA + '\nvim\autoload\plug.vim')
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+  call plug#begin('$LOCALAPPDATA\nvim\plugged')
 else
+  let g:python3_host_prog = '/usr/bin/python3'
   if empty(glob('~/.config/nvim/autoload/plug.vim'))
     silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
