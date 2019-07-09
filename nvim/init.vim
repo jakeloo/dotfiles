@@ -18,6 +18,26 @@ else
   call plug#begin('~/.config/nvim/plugged')
 endif
 
+function! InstallCocExtensions(info)
+  if a:info.status == 'installed' || a:info.force
+    call coc#util#install()
+
+    let extensions = [
+          \   'coc-css',
+          \   'coc-rls',
+          \   'coc-html',
+          \   'coc-json',
+          \   'coc-python',
+          \   'coc-yaml',
+          \   'coc-tsserver',
+          \ ]
+
+    for ext in extensions
+      call coc#add_extension(ext)
+    endfor
+  endif
+endfunction
+
 " Neobundle
 Plug 'tpope/vim-fugitive'
 Plug 'gregsexton/gitv'
@@ -28,14 +48,12 @@ Plug 'rking/ag.vim'
 Plug 'bling/vim-airline'
 Plug 'yegappan/greplace'
 Plug 'sheerun/vim-polyglot'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'w0rp/ale'
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': function('InstallCocExtensions')}
 
 " colors
 Plug 'chriskempson/base16-vim'
 Plug 'owickstrom/vim-colors-paramount'
 Plug 'nightsense/vimspectr'
-
 
 call plug#end()
 
@@ -43,13 +61,9 @@ call plug#end()
 filetype plugin indent on
 
 " colorsss
-if is_windows
-  set termguicolors                " true color
-  silent! colorscheme base16-ocean
-else
-  silent! colorscheme paramount
-endif
 set background=dark
+set termguicolors                " true color
+silent! colorscheme base16-ocean
 
 " Required for operations modifying multiple buffers like rename.
 set hidden
@@ -135,23 +149,51 @@ let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|virtualenv)|(\.(swp
 set grepprg=ag
 let g:grep_cmd_opts = '--line-numbers --noheading'
 
-" Language Server (ALE)
-if is_windows
-  let $PATH .= expand(';$APPDATA/npm')
+" coc.nvim
+" Some servers have issues with backup files, see #649
+set nobackup
+set nowritebackup
 
-endif
-let g:airline#extensions#ale#enabled = 1
-let g:ale_sign_column_always = 1
-let g:ale_lint_on_text_changed = 0
-let g:ale_completion_enabled = 1
-let g:ale_linters = {
-\ 'javascript': ['eslint'],
-\ 'python': ['pylint']
-\ }
-let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\}
+set updatetime=300
+set shortmess+=c
+set signcolumn=yes
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+" Use `:OR` for organize import of current buffer
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd FileType json syntax match Comment +\/\/.\+$+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+" Remap for format selected region
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
 
 
-" Deoplete
-let g:deoplete#enable_at_startup = 1
