@@ -25,10 +25,7 @@ zplug chrissicool/zsh-256color, from:github
 zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 
 if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
-  fi
+  zplug install
 fi
 
 # Then, source plugins and add commands to $PATH
@@ -36,11 +33,10 @@ zplug load --verbose
 
 # node version manager and os specific commands
 export NVM_DIR="$HOME/.nvm"
-if [ "$(uname 2> /dev/null)" == "Darwin" ]; then
+if [[ "$(uname 2> /dev/null)" = "Darwin" ]]; then
   [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
   [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
-fi
-if [ "$(uname 2> /dev/null)" == "Linux" ]; then
+elif [[ "$(uname 2> /dev/null)" = "Linux" ]]; then
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
