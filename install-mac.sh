@@ -18,11 +18,9 @@ sh ./zsh/install-zplug.sh
 curl -sLo /tmp/dotfiles.zip https://github.com/jakeloo/dotfiles/archive/master.zip
 cd /tmp
 mkdir ~/.config
-mkdir ~/.tmux
 unzip dotfiles.zip
 cp dotfiles-master/zsh/.zshrc ~/.zshrc
 cp -a dotfiles-master/nvim ~/.config
-cp dotfiles-master/tmux/color.tmuxcolors ~/.tmux
 cp dotfiles-master/tmux/.tmux.conf ~
 
 source ~/.zshrc

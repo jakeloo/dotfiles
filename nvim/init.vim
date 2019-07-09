@@ -139,9 +139,13 @@ endif
 
 " Nerdtree
 let g:nerdtree_tabs_open_on_gui_startup=0
+let NERDTreeShowHidden=1
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 nmap ,n :NERDTreeToggle<CR>
 nmap ,m :NERDTreeFind<CR>
 
+" ctrlp
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|virtualenv)|(\.(swp|ico|git|svn))$'
 
