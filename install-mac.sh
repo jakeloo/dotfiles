@@ -13,7 +13,10 @@ if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-/usr/local/bin/brew install zsh the_silver_searcher tmux neovim nvm git reattach-to-user-namespace
+# for gopath
+mkdir -p ~/workspace/go
+
+/usr/local/bin/brew install zsh the_silver_searcher tmux neovim nvm git reattach-to-user-namespace tig go
 
 if ! $NO_ZSH_INSTALLED; then
   echo "Setting ZSH as default shell"
@@ -43,4 +46,15 @@ nvm use node
 
 # install nvim plugins
 /usr/local/bin/nvim +PlugInstall +qa
+
+# install gopls
+if ! [ -f "$HOME/workspace/go/bin/gopls" ]; then
+  /usr/local/bin/go get golang.org/x/tools/gopls
+fi
+
+# install rust
+if ! [ -f "/usr/local/bin/rustc" ]; then
+  curl https://sh.rustup.rs -sSf | sh
+fi
+
 

@@ -30,6 +30,7 @@ function! InstallCocExtensions(info)
           \   'coc-python',
           \   'coc-yaml',
           \   'coc-tsserver',
+          \   'coc-vimtex',
           \ ]
 
     for ext in extensions
@@ -48,6 +49,7 @@ Plug 'rking/ag.vim'
 Plug 'bling/vim-airline'
 Plug 'yegappan/greplace'
 Plug 'sheerun/vim-polyglot'
+Plug 'lervag/vimtex'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': function('InstallCocExtensions')}
 

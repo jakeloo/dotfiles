@@ -58,6 +58,7 @@ function ssh-reagent() {
 }
 
 export EDITOR='nvim'
+export GOPATH=$HOME/workspace/go
 export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOPATH/bin:$PATH
 # export PATH=~/anaconda3/bin:/Library/TeX/texbin:$PATH
 
