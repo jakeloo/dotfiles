@@ -1,45 +1,55 @@
+### Added by Zplugin's installer
+if [[ ! -d ${HOME}/.zplugin ]]; then
+  mkdir -p ${HOME}/.zplugin
+  git clone https://github.com/zdharma/zplugin.git ${HOME}/.zplugin/bin
+fi
+
+source "$HOME/.zplugin/bin/zplugin.zsh"
+autoload -Uz _zplugin
+(( ${+_comps} )) && _comps[zplugin]=_zplugin
+### End of Zplugin's installer chunk
+
 # Set up the prompt
 [[ "$TERM" == "xterm" ]] && export TERM=xterm-256color
 
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  alias ls='ls --color=auto'
+  alias dir='dir --color=auto'
+  alias vdir='vdir --color=auto'
+  alias grep='grep --color=auto'
+  alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
 fi
-
-autoload -U promptinit; promptinit
 
 PURE_PROMPT_SYMBOL=">"
 PURE_PROMPT_VICMD_SYMBOL="<"
 
-# zplug section
-source ~/.zplug/init.zsh
+zplugin light chrissicool/zsh-256color
+zplugin light zsh-users/zsh-autosuggestions
+zplugin light zsh-users/zsh-history-substring-search
+zplugin ice pick"async.zsh" src"pure.zsh"
+zplugin light sindresorhus/pure
+zplugin ice wait"0" silent pick"history.zsh" lucid
+zplugin snippet OMZ::lib/history.zsh
 
-zplug mafredri/zsh-async, from:github
-zplug chrissicool/zsh-256color, from:github
-zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
+autoload -zU promptinit; promptinit
+autoload -zU compinit; compinit
+zplugin cdreplay -q
 
-if ! zplug check --verbose; then
-  zplug install
-fi
-
-# Then, source plugins and add commands to $PATH
-zplug load --verbose
+bindkey -e
 
 # node version manager and os specific commands
 export NVM_DIR="$HOME/.nvm"
 if [[ "$(uname 2> /dev/null)" = "Darwin" ]]; then
-  [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
-elif [[ "$(uname 2> /dev/null)" = "Linux" ]]; then
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  export NVM_DIR="/usr/local/opt/nvm"
 fi
+nvm() {
+  unfunction "$0"
+  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+  $0 "$@"
+}
 
 if hash keychain 2> /dev/null; then
   eval `keychain --eval id_rsa 2> /dev/null`
@@ -58,9 +68,9 @@ function ssh-reagent() {
 }
 
 export EDITOR='nvim'
-export GOPATH=$HOME/workspace/go
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOPATH/bin:$PATH
+export GOPATH="$HOME/workspace/go"
+export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+export PATH=$PATH:$HOME/.cargo/bin
 # export PATH=~/anaconda3/bin:/Library/TeX/texbin:$PATH
-
 
 

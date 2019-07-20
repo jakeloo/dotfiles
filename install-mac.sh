@@ -23,11 +23,6 @@ if ! $NO_ZSH_INSTALLED; then
   chsh -s /bin/zsh
 fi
 
-if ! [ -d ~/.zplug ]; then
-  echo "Installing zplug"
-  /bin/zsh zsh/install-zplug.sh
-fi
-
 # install .zshrc, nvim, tmux config
 curl -sLo /tmp/dotfiles.zip https://github.com/jakeloo/dotfiles/archive/master.zip
 
@@ -53,7 +48,7 @@ if ! [ -f "$HOME/workspace/go/bin/gopls" ]; then
 fi
 
 # install rust
-if ! [ -f "/usr/local/bin/rustc" ]; then
+if ! [ -f "$HOME/.cargo" ]; then
   curl https://sh.rustup.rs -sSf | sh
 fi
 
