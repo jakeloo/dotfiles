@@ -68,9 +68,16 @@ function ssh-reagent() {
 }
 
 export EDITOR='nvim'
+
 export GOPATH="$HOME/workspace/go"
-export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+export GOBIN="$GOPATH/bin"
+if [[ ! -d ${GOBIN} ]]; then
+  mkdir -p ${GOBIN}
+fi
+
+export PATH=$PATH:$GOBIN:/usr/local/go/bin
 export PATH=$PATH:$HOME/.cargo/bin
+
 # export PATH=~/anaconda3/bin:/Library/TeX/texbin:$PATH
 
 
