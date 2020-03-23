@@ -38,18 +38,6 @@ zinit cdreplay -q
 
 bindkey -e
 
-# node version manager and os specific commands
-export NVM_DIR="$HOME/.nvm"
-if [[ "$(uname 2> /dev/null)" = "Darwin" ]]; then
-  export NVM_DIR="/usr/local/opt/nvm"
-fi
-nvm() {
-  unfunction "$0"
-  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-  $0 "$@"
-}
-
 if hash keychain 2> /dev/null; then
   eval `keychain --eval id_rsa 2> /dev/null`
 fi
