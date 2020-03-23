@@ -47,9 +47,14 @@ if ! [ -f "$HOME/workspace/go/bin/gopls" ]; then
   /usr/local/bin/go get golang.org/x/tools/gopls
 fi
 
+# volta
+if ! [ -f "$HOME/.volta" ]; then
+  curl https://get.volta.sh | bash
+fi
+
 # install rust
 if ! [ -f "$HOME/.cargo" ]; then
-  curl https://sh.rustup.rs -sSf | sh
+  curl https://sh.rustup.rs -sSf | bash
 fi
 
 
