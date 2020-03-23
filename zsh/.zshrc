@@ -1,13 +1,12 @@
-### Added by Zplugin's installer
-if [[ ! -d ${HOME}/.zplugin ]]; then
-  mkdir -p ${HOME}/.zplugin
-  git clone https://github.com/zdharma/zplugin.git ${HOME}/.zplugin/bin
+if [[ ! -d ${HOME}/.zinit ]]; then
+  mkdir -p ${HOME}/.zinit
+  git clone https://github.com/zdharma/zinit.git ${HOME}/.zinit/bin
 fi
 
-source "$HOME/.zplugin/bin/zplugin.zsh"
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin's installer chunk
+source $HOME/.zinit/bin/zinit.zsh
+
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
 
 # Set up the prompt
 [[ "$TERM" == "xterm" ]] && export TERM=xterm-256color
@@ -25,17 +24,17 @@ fi
 PURE_PROMPT_SYMBOL=">"
 PURE_PROMPT_VICMD_SYMBOL="<"
 
-zplugin light chrissicool/zsh-256color
-zplugin light zsh-users/zsh-autosuggestions
-zplugin light zsh-users/zsh-history-substring-search
-zplugin ice pick"async.zsh" src"pure.zsh"
-zplugin light sindresorhus/pure
-zplugin ice wait"0" silent pick"history.zsh" lucid
-zplugin snippet OMZ::lib/history.zsh
+zinit light chrissicool/zsh-256color
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-history-substring-search
+zinit light sindresorhus/pure
+zinit ice pick"async.zsh" src"pure.zsh"
+zinit ice wait"0" silent pick"history.zsh" lucid
+zinit snippet OMZ::lib/history.zsh
 
 autoload -zU promptinit; promptinit
 autoload -zU compinit; compinit
-zplugin cdreplay -q
+zinit cdreplay -q
 
 bindkey -e
 
@@ -68,16 +67,8 @@ function ssh-reagent() {
 }
 
 export EDITOR='nvim'
-
 export GOPATH="$HOME/workspace/go"
 export GOBIN="$GOPATH/bin"
-if [[ ! -d ${GOBIN} ]]; then
-  mkdir -p ${GOBIN}
-fi
-
-export PATH=$PATH:$GOBIN:/usr/local/go/bin
-export PATH=$PATH:$HOME/.cargo/bin
-
-# export PATH=~/anaconda3/bin:/Library/TeX/texbin:$PATH
-
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOBIN:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
 

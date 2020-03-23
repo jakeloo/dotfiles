@@ -53,6 +53,7 @@ Plug 'lervag/vimtex'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': function('InstallCocExtensions')}
 
+
 " colors
 Plug 'chriskempson/base16-vim'
 Plug 'owickstrom/vim-colors-paramount'
@@ -202,5 +203,8 @@ nmap <leader>rn <Plug>(coc-rename)
 " Remap for format selected region
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
+
+
+let g:vimtex_compiler_progname = 'nvr'
 
 
