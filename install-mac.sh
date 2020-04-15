@@ -16,7 +16,7 @@ fi
 # for gopath
 mkdir -p ~/workspace/go
 
-/usr/local/bin/brew install zsh the_silver_searcher tmux neovim nvm git reattach-to-user-namespace tig go
+/usr/local/bin/brew install zsh the_silver_searcher tmux neovim git reattach-to-user-namespace tig go
 
 if ! $NO_ZSH_INSTALLED; then
   echo "Setting ZSH as default shell"
@@ -32,12 +32,6 @@ unzip -o dotfiles.zip
 cp dotfiles-master/zsh/.zshrc ~/.zshrc
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
-
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh" # loads nvm
-
-# install node
-nvm install node --latest-npm
-nvm use node
 
 # install nvim plugins
 /usr/local/bin/nvim +PlugInstall +qa

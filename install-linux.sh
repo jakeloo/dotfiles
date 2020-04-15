@@ -27,25 +27,20 @@ cp dotfiles-master/zsh/.zshrc ~/.zshrc
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 
-NVM_DIR="$HOME/.nvm"
-NVM_VERSION="v0.34.0"
-mkdir -p $NVM_DIR
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-# install node
-nvm install node --latest-npm
-nvm use node
-
 # install nvim plugins
 /usr/local/bin/nvim +PlugInstall +qa
 
 # install go and gopls
-GO_VERSION="1.12.7"
+GO_VERSION="1.14.2"
 curl -sLo /tmp/go.tar.gz https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf /tmp/go.tar.gz
 if ! [ -f "/usr/local/go/bin/gopls" ]; then
   /usr/local/go/bin/go get golang.org/x/tools/gopls
+fi
+
+# volta
+if ! [ -f "$HOME/.volta" ]; then
+  curl https://get.volta.sh | bash
 fi
 
 # install rust
