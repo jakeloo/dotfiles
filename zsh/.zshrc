@@ -1,6 +1,10 @@
+if [[ "$(uname -r)" =~ Microsoft$ ]]; then
+  umask 0022
+fi
+
 if [[ ! -d ${HOME}/.zinit ]]; then
   mkdir -p ${HOME}/.zinit
-  git clone https://github.com/zdharma/zinit.git ${HOME}/.zinit/bin
+  git clone --depth=1 https://github.com/zdharma/zinit.git ${HOME}/.zinit/bin
 fi
 
 source $HOME/.zinit/bin/zinit.zsh
@@ -68,3 +72,4 @@ if [[ ! -d ${GOBIN} ]]; then
   mkdir -p ${GOBIN}
 fi
 
+setopt HIST_IGNORE_SPACE
