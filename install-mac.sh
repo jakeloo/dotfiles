@@ -33,9 +33,6 @@ cp dotfiles-master/zsh/.zshrc ~/.zshrc
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 
-# install nvim plugins
-/usr/local/bin/nvim +PlugInstall +qa
-
 # install gopls
 if ! [ -f "$HOME/workspace/go/bin/gopls" ]; then
   /usr/local/bin/go get golang.org/x/tools/gopls
@@ -46,9 +43,15 @@ if ! [ -f "$HOME/.volta" ]; then
   curl https://get.volta.sh | bash
 fi
 
+# node
+if hash node 2> /dev/null; then
+  $HOME/.volta/bin/volta install node
+fi
+
 # install rust
 if ! [ -f "$HOME/.cargo" ]; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
 fi
 
-
+# install nvim plugins
+/usr/local/bin/nvim +PlugInstall +qa
