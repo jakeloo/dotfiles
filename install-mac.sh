@@ -48,7 +48,7 @@ fi
 
 # install rust
 if ! [ -f "$HOME/.cargo" ]; then
-  curl https://sh.rustup.rs -sSf | bash
+  curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
 fi
 
 
