@@ -20,15 +20,13 @@ fi
 # install .zshrc, nvim, tmux config
 curl -sLo /tmp/dotfiles.zip https://github.com/jakeloo/dotfiles/archive/master.zip
 
+# unpacking
 cd /tmp
 mkdir -p ~/.config
 unzip -o dotfiles.zip
 cp dotfiles-master/zsh/.zshrc ~/.zshrc
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
-
-# install nvim plugins
-nvim +PlugInstall +qa
 
 # install go and gopls
 GO_VERSION="1.14.2"
@@ -43,6 +41,11 @@ if ! [ -f "$HOME/.volta" ]; then
   curl https://get.volta.sh | bash
 fi
 
+# node
+if hash node 2> /dev/null; then
+  $HOME/.volta/bin/volta install node
+fi
+
 # install rust
 if ! [ -d ~/.cargo ]; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
@@ -51,3 +54,5 @@ fi
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 sudo update-alternatives --config editor --skip-auto
 
+# install nvim plugins
+nvim +PlugInstall +qa
