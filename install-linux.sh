@@ -28,7 +28,7 @@ cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 
 # install nvim plugins
-/usr/local/bin/nvim +PlugInstall +qa
+nvim +PlugInstall +qa
 
 # install go and gopls
 GO_VERSION="1.14.2"
@@ -45,7 +45,7 @@ fi
 
 # install rust
 if ! [ -d ~/.cargo ]; then
-  curl https://sh.rustup.rs -sSf | sh
+  curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain=stable --profile=default
 fi
 
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
