@@ -30,6 +30,7 @@ cd /tmp
 mkdir -p ~/.config
 unzip -o dotfiles.zip
 cp dotfiles-master/zsh/.zshrc ~/.zshrc
+cp dotfiles-master/dircolors/bliss.dircolors ~/.dircolors
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 
