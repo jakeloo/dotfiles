@@ -45,7 +45,7 @@ fi
 
 # install rust
 if ! [ -d ~/.cargo ]; then
-  curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain=stable --profile=default
+  curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
 fi
 
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
