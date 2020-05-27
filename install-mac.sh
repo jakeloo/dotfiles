@@ -34,6 +34,11 @@ cp dotfiles-master/dircolors/bliss.dircolors ~/.dircolors
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 
+# install tpm
+if ! [ -f "$HOME/.tmux/plugins/tpm" ]; then
+  git clone --depth=1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
 # install gopls
 if ! [ -f "$HOME/workspace/go/bin/gopls" ]; then
   /usr/local/bin/go get golang.org/x/tools/gopls

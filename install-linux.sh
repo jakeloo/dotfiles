@@ -29,6 +29,11 @@ cp dotfiles-master/dircolors/bliss.dircolors ~/.dircolors
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 
+# install tpm
+if ! [ -f "$HOME/.tmux/plugins/tpm" ]; then
+  git clone --depth=1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
 # install go and gopls
 GO_VERSION="1.14.2"
 curl -sLo /tmp/go.tar.gz https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
