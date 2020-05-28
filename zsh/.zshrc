@@ -61,15 +61,11 @@ function ssh-reagent() {
 export EDITOR='nvim'
 
 export VOLTA_HOME=$HOME/.volta
-export GOPATH="$HOME/workspace/go"
-export GOBIN="$GOPATH/bin"
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOBIN:$PATH
+export GOROOT=$HOME/workspace/go/root/go
+export GOPATH=$HOME/workspace/go
+export GOBIN=$GOPATH/bin
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOROOT/bin:$GOBIN:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=$VOLTA_HOME/bin:$PATH
-# export PATH=~/anaconda3/bin:/Library/TeX/texbin:$PATH
-
-if [[ ! -d ${GOBIN} ]]; then
-  mkdir -p ${GOBIN}
-fi
 
 setopt HIST_IGNORE_SPACE

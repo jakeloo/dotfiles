@@ -13,9 +13,6 @@ if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-# for gopath
-mkdir -p ~/workspace/go
-
 /usr/local/bin/brew install zsh the_silver_searcher tmux neovim git reattach-to-user-namespace tig go
 
 if ! $NO_ZSH_INSTALLED; then

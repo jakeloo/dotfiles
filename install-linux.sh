@@ -4,10 +4,8 @@ if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-mkdir -p ~/workspace/go
-
 sudo add-apt-repository -y ppa:neovim-ppa/stable
-sudo apt-get -y install build-essential libssl-dev software-properties-common python-software-properties
+sudo apt-get -y install build-essential libssl-dev software-properties-common 
 sudo apt-get -y install python-dev python-pip python3-dev python3-pip
 sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip neovim
 sudo apt-get -y upgrade
@@ -35,17 +33,19 @@ if ! [ -d "$HOME/.tmux/plugins/tpm" ]; then
 fi
 
 # install go and gopls
+GOROOT="$HOME/workspace/go/root"
 GOPATH="$HOME/workspace/go"
 GOBIN="$GOPATH/bin"
 GO_VERSION="1.14.2"
 
-if ! [ -d "$GOPATH" ]; then
-curl -sLo /tmp/go.tar.gz https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
-tar -C $GOPATH -xzf /tmp/go.tar.gz
+if ! [ -d "$GOROOT" ]; then
+  curl -sLo /tmp/go.tar.gz https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
+  mkdir -p $GOROOT
+  tar -C $GOROOT -xzf /tmp/go.tar.gz
 fi
 
 if ! [ -f "$GOBIN/gopls" ]; then
-  $GOBIN/go get golang.org/x/tools/gopls
+  $GOROOT/go/bin/go get golang.org/x/tools/gopls
 fi
 
 # volta
@@ -54,7 +54,7 @@ if ! [ -d "$HOME/.volta" ]; then
 fi
 
 # node
-if hash node 2> /dev/null; then
+if ! hash node 2> /dev/null; then
   $HOME/.volta/bin/volta install node
 fi
 
