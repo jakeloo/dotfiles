@@ -35,7 +35,7 @@ cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 
 # install tpm
-if ! [ -f "$HOME/.tmux/plugins/tpm" ]; then
+if ! [ -d "$HOME/.tmux/plugins/tpm" ]; then
   git clone --depth=1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
@@ -45,7 +45,7 @@ if ! [ -f "$HOME/workspace/go/bin/gopls" ]; then
 fi
 
 # volta
-if ! [ -f "$HOME/.volta" ]; then
+if ! [ -d "$HOME/.volta" ]; then
   curl https://get.volta.sh | bash
 fi
 
@@ -55,7 +55,7 @@ if hash node 2> /dev/null; then
 fi
 
 # install rust
-if ! [ -f "$HOME/.cargo" ]; then
+if ! [ -d "$HOME/.cargo" ]; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
 fi
 
