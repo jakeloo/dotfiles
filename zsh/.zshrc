@@ -58,11 +58,10 @@ function ssh-reagent() {
   echo Cannot find ssh agent - maybe you should reconnect and forward it?
 }
 
+export EDITOR='nvim'
 export VOLTA_HOME=$HOME/.volta
-
 export GOPATH="$HOME/workspace/go"
 export GOBIN="$GOPATH/bin"
-export EDITOR='nvim'
 export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOBIN:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=$VOLTA_HOME/bin:$PATH

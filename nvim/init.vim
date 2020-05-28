@@ -42,6 +42,7 @@ endfunction
 
 " Neobundle
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-obsession'
 Plug 'gregsexton/gitv'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
