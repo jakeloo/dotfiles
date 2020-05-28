@@ -35,11 +35,17 @@ if ! [ -d "$HOME/.tmux/plugins/tpm" ]; then
 fi
 
 # install go and gopls
+GOPATH="$HOME/workspace/go"
+GOBIN="$GOPATH/bin"
 GO_VERSION="1.14.2"
+
+if ! [ -d "$GOPATH" ]; then
 curl -sLo /tmp/go.tar.gz https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf /tmp/go.tar.gz
-if ! [ -f "/usr/local/go/bin/gopls" ]; then
-  /usr/local/go/bin/go get golang.org/x/tools/gopls
+tar -C $GOPATH -xzf /tmp/go.tar.gz
+fi
+
+if ! [ -f "$GOBIN/gopls" ]; then
+  $GOBIN/go get golang.org/x/tools/gopls
 fi
 
 # volta

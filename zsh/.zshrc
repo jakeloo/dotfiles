@@ -59,6 +59,7 @@ function ssh-reagent() {
 }
 
 export EDITOR='nvim'
+
 export VOLTA_HOME=$HOME/.volta
 export GOPATH="$HOME/workspace/go"
 export GOBIN="$GOPATH/bin"
