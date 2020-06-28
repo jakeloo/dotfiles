@@ -55,6 +55,7 @@ Plug 'lervag/vimtex'
 Plug 'preservim/nerdcommenter'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': function('InstallCocExtensions')}
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
 " colors
 Plug 'chriskempson/base16-vim'
