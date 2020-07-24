@@ -42,9 +42,11 @@ zinit cdreplay -q
 
 bindkey -e
 
-if hash keychain 2> /dev/null; then
-  eval `keychain --eval id_rsa 2> /dev/null`
-fi
+function kc() {
+  if hash keychain 2> /dev/null; then
+    eval `keychain --eval id_rsa 2> /dev/null`
+  fi
+}
 
 function ssh-reagent() {
   for agent in /tmp/ssh-*/agent.*; do
