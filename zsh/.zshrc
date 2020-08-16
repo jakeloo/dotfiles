@@ -40,13 +40,8 @@ autoload -zU promptinit; promptinit
 autoload -zU compinit; compinit
 zinit cdreplay -q
 
+setopt HIST_IGNORE_SPACE
 bindkey -e
-
-function kc() {
-  if hash keychain 2> /dev/null; then
-    eval `keychain --eval id_rsa 2> /dev/null`
-  fi
-}
 
 function ssh-reagent() {
   for agent in /tmp/ssh-*/agent.*; do
@@ -59,9 +54,9 @@ function ssh-reagent() {
   done
   echo Cannot find ssh agent - maybe you should reconnect and forward it?
 }
+alias initkc='eval `keychain --eval id_rsa`'
 
 export EDITOR='nvim'
-
 export VOLTA_HOME=$HOME/.volta
 export GOROOT=$HOME/workspace/go/root/go
 export GOPATH=$HOME/workspace/go
@@ -70,4 +65,4 @@ export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOROOT
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=$VOLTA_HOME/bin:$PATH
 
-setopt HIST_IGNORE_SPACE
+
