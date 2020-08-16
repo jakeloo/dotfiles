@@ -54,6 +54,10 @@ function ssh-reagent() {
   done
   echo Cannot find ssh agent - maybe you should reconnect and forward it?
 }
+
+if hash keychain 2> /dev/null; then
+  eval `keychain --eval id_rsa --noask 2> /dev/null`
+fi
 alias initkc='eval `keychain --eval id_rsa`'
 
 export EDITOR='nvim'
