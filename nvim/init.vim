@@ -18,28 +18,6 @@ else
   call plug#begin('~/.config/nvim/plugged')
 endif
 
-function! InstallCocExtensions(info)
-  if a:info.status == 'installed' || a:info.force
-    call coc#util#install()
-
-    let extensions = [
-          \   'coc-css',
-          \   'coc-clangd',
-          \   'coc-rls',
-          \   'coc-html',
-          \   'coc-json',
-          \   'coc-python',
-          \   'coc-yaml',
-          \   'coc-tsserver',
-          \   'coc-vimtex',
-          \ ]
-
-    for ext in extensions
-      call coc#add_extension(ext)
-    endfor
-  endif
-endfunction
-
 " Neobundle
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
@@ -53,9 +31,7 @@ Plug 'yegappan/greplace'
 Plug 'sheerun/vim-polyglot'
 Plug 'lervag/vimtex'
 Plug 'preservim/nerdcommenter'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': function('InstallCocExtensions')}
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " colors
 Plug 'chriskempson/base16-vim'
@@ -161,6 +137,23 @@ set grepprg=ag
 let g:grep_cmd_opts = '--line-numbers --noheading'
 
 " coc.nvim
+let g:coc_global_extensions = [
+  \ 'coc-clangd',
+  \ 'coc-go',
+  \ 'coc-rls',
+  \ 'coc-python',
+  \ 'coc-java',
+  \ 'coc-vimtex',
+  \ 'coc-tsserver',
+  \ 'coc-html',
+  \ 'coc-css',
+  \ 'coc-json',
+  \ 'coc-yaml',
+  \ 'coc-graphql',
+  \ 'coc-eslint',
+  \ 'coc-prettier',
+\ ]
+
 " Some servers have issues with backup files, see #649
 set nobackup
 set nowritebackup
