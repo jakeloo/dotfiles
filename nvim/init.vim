@@ -152,6 +152,7 @@ let g:coc_global_extensions = [
   \ 'coc-graphql',
   \ 'coc-eslint',
   \ 'coc-prettier',
+  \ 'coc-styled-components',
 \ ]
 
 " Some servers have issues with backup files, see #649
