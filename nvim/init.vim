@@ -32,6 +32,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'lervag/vimtex'
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'pantharshit00/vim-prisma'
 
 " colors
 Plug 'chriskempson/base16-vim'
@@ -150,6 +151,7 @@ let g:coc_global_extensions = [
   \ 'coc-json',
   \ 'coc-yaml',
   \ 'coc-graphql',
+  \ 'coc-prisma',
   \ 'coc-eslint',
   \ 'coc-prettier',
   \ 'coc-styled-components',
