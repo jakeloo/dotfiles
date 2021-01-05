@@ -142,7 +142,7 @@ let g:coc_global_extensions = [
   \ 'coc-clangd',
   \ 'coc-go',
   \ 'coc-rls',
-  \ 'coc-python',
+  \ 'coc-pyright',
   \ 'coc-java',
   \ 'coc-vimtex',
   \ 'coc-tsserver',
