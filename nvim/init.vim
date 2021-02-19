@@ -33,6 +33,7 @@ Plug 'lervag/vimtex'
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'pantharshit00/vim-prisma'
+Plug 'TovarishFin/vim-solidity'
 
 " colors
 Plug 'chriskempson/base16-vim'
@@ -211,3 +212,6 @@ let g:vimtex_compiler_latexmk = {
       \   '-interaction=nonstopmode',
       \ ]
       \}
+
+let g:polyglot_disabled = ['solidity']
+
