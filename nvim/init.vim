@@ -34,6 +34,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'pantharshit00/vim-prisma'
 Plug 'TovarishFin/vim-solidity'
+Plug 'vyperlang/vim-vyper'
 
 " colors
 Plug 'chriskempson/base16-vim'
