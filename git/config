@@ -1,0 +1,15 @@
+[user]
+name=Jake Loo
+email=2171134+jakeloo@users.noreply.github.com
+
+[init]
+defaultBranch=main
+
+[pull]
+rebase=true
+
+[fetch]
+prune=true
+
+[diff]
+colorMoved=zebra
