@@ -68,3 +68,5 @@ sudo update-alternatives --config editor --skip-auto
 
 # install nvim plugins
 nvim +PlugInstall +qa
+
+echo "Run: 'tailscale up'"

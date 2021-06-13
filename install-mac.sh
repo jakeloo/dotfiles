@@ -58,3 +58,5 @@ fi
 
 # install nvim plugins
 /usr/local/bin/nvim +PlugInstall +qa
+
+echo "Run: 'tailscale up'"
