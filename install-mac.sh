@@ -59,4 +59,5 @@ fi
 # install nvim plugins
 /usr/local/bin/nvim +PlugInstall +qa
 
-echo "Run: 'tailscale up'"
+echo "Run: Connecting tailscale. `tailscale up`"
+echo "Run: Set ZSH default shell. `chsh -s $(which zsh)`"

@@ -36,7 +36,7 @@ fi
 GOROOT="$HOME/workspace/go/root"
 GOPATH="$HOME/workspace/go"
 GOBIN="$GOPATH/bin"
-GO_VERSION="1.14.2"
+GO_VERSION="1.16.5"
 
 if ! [ -d "$GOROOT" ]; then
   curl -sLo /tmp/go.tar.gz https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
@@ -69,4 +69,5 @@ sudo update-alternatives --config editor --skip-auto
 # install nvim plugins
 nvim +PlugInstall +qa
 
-echo "Run: 'tailscale up'"
+echo "Run: Connecting tailscale. `tailscale up`"
+echo "Run: Set ZSH default shell. `chsh -s $(which zsh)`"
