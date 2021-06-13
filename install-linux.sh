@@ -15,6 +15,13 @@ if ! $NO_ZSH_INSTALLED; then
   chsh -s /bin/zsh
 fi
 
+# tailgate
+curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.gpg | sudo apt-key add -
+curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.list | sudo tee /etc/apt/sources.list.d/tailscale.list
+sudo apt-get -y update
+sudo apt-get -y install tailscale
+
+
 # install .zshrc, nvim, tmux config
 curl -sLo /tmp/dotfiles.zip https://github.com/jakeloo/dotfiles/archive/master.zip
 
