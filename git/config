@@ -1,6 +1,10 @@
 [user]
 name=Jake Loo
 email=2171134+jakeloo@users.noreply.github.com
+signingkey=5BF3F0AA545AEA6A
+
+[commit]
+gpgsign=true
 
 [init]
 defaultBranch=main
