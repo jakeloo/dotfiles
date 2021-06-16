@@ -34,6 +34,7 @@ cp dotfiles-master/dircolors/bliss.dircolors ~/.dircolors
 cp dotfiles-master/tmux/.tmux.conf ~
 cp -a dotfiles-master/nvim ~/.config
 cp -a dotfiles-master/git ~/.config
+cp -a dotfiles-master/gnupg ~/.gnupg
 
 # install tpm
 if ! [ -d "$HOME/.tmux/plugins/tpm" ]; then
