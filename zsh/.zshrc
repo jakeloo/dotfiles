@@ -69,5 +69,6 @@ export GOPATH=$HOME/workspace/go
 export GOBIN=$GOPATH/bin
 export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOROOT/bin:$GOBIN:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
 export PATH=$VOLTA_HOME/bin:$PATH
 
