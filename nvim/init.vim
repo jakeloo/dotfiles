@@ -190,13 +190,19 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
-" Remap for rename current word
 nmap <silent> <F2> <Plug>(coc-rename)
-" Remap for format selected region
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+xmap <leader> a  <Plug>(coc-codeaction-selected)
+nmap <leader> a  <Plug>(coc-codeaction-selected)
+nmap <leader> ac  <Plug>(coc-codeaction)
+nmap <silent> ca  <Plug>(coc-codeaction)
+nmap <silent> <F4> <Plug>(coc-codeaction)
+nmap <leader> qf  <Plug>(coc-fix-current)
+nmap <silent> [c :call CocAction('diagnosticNext')<cr>
+nmap <silent> ]c :call CocAction('diagnosticPrevious')<cr>
 
 " commenter
 nmap <silent> <C-c> <plug>NERDCommenterInvert<CR>
