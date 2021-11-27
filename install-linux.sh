@@ -45,7 +45,7 @@ fi
 GOROOT="$HOME/workspace/go/root"
 GOPATH="$HOME/workspace/go"
 GOBIN="$GOPATH/bin"
-GO_VERSION="1.16.5"
+GO_VERSION="1.17.3"
 
 if ! [ -d "$GOROOT" ]; then
   curl -sLo /tmp/go.tar.gz https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz
