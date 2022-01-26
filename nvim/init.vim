@@ -1,3 +1,4 @@
+
 let is_windows=has("win32")
 if is_windows
   let g:python3_host_prog = 'C:\Windows\py.exe'
@@ -18,6 +19,8 @@ else
   call plug#begin('~/.config/nvim/plugged')
 endif
 
+let g:ale_disable_lsp = 1
+
 " Neobundle
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
@@ -35,6 +38,8 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'pantharshit00/vim-prisma'
 Plug 'TovarishFin/vim-solidity'
 Plug 'vyperlang/vim-vyper'
+Plug 'github/copilot.vim'
+Plug 'dense-analysis/ale'
 
 " colors
 Plug 'chriskempson/base16-vim'
@@ -221,3 +226,7 @@ let g:vimtex_compiler_latexmk = {
 
 let g:polyglot_disabled = ['solidity']
 
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+\  'solidity': ['solhint'],
+\ }

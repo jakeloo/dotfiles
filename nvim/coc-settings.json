@@ -1,6 +1,7 @@
 {
   "eslint.format.enable": true,
   "eslint.autoFixOnSave": true,
+  "diagnostic.displayByAle": true,
   "coc.preferences.formatOnSaveFiletypes": [
     "javascript",
     "javascriptreact",
@@ -8,6 +9,7 @@
     "typescriptreact",
     "css",
     "json",
-    "prisma"
+    "prisma",
+    "solidity"
   ]
 }
