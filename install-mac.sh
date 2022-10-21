@@ -6,7 +6,7 @@ xcode-select --install 2> /dev/null
 # Install brew
 if ! [ -f "/usr/local/bin/brew" ]; then
   echo "Installing Hombrew"
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 if ! [ -f "/bin/zsh" ]; then
