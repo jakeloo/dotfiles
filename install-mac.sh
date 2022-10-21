@@ -13,7 +13,7 @@ if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-/usr/local/bin/brew install zsh the_silver_searcher tmux neovim git reattach-to-user-namespace tig go
+/opt/homebrew/bin/brew install zsh the_silver_searcher tmux neovim git reattach-to-user-namespace tig go
 
 if ! $NO_ZSH_INSTALLED; then
   echo "Setting ZSH as default shell"
