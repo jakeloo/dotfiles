@@ -4,7 +4,7 @@
 xcode-select --install 2> /dev/null
 
 # Install brew
-if ! [ -f "/usr/local/bin/brew" ]; then
+if ! [ -f "/opt/homebrew/bin/brew" ]; then
   echo "Installing Hombrew"
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
