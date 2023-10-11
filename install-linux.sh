@@ -4,10 +4,9 @@ if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-sudo add-apt-repository -y ppa:neovim-ppa/stable
 sudo apt-get -y install build-essential libssl-dev software-properties-common 
 sudo apt-get -y install python-dev python-pip python3-dev python3-pip
-sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip neovim
+sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip
 sudo apt-get -y upgrade
 
 if ! $NO_ZSH_INSTALLED; then
@@ -15,12 +14,17 @@ if ! $NO_ZSH_INSTALLED; then
   chsh -s /bin/zsh
 fi
 
-# tailgate
-curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.gpg | sudo apt-key add -
-curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.list | sudo tee /etc/apt/sources.list.d/tailscale.list
-sudo apt-get -y update
-sudo apt-get -y install tailscale
+# nvim
+cd /tmp
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+chmod u+x nvim.appimage
+./nvim.appimage --appimage-extract
+mkdir -p $HOME/app/nvim
+mv squashfs-root $HOME/app/nvim
+sudo ln -s $HOME/app/nvim/squashfs-root/AppRun /usr/bin/nvim
 
+# tailgate
+curl -fsSL https://tailscale.com/install.sh | sh
 
 # install .zshrc, nvim, tmux config
 curl -sLo /tmp/dotfiles.zip https://github.com/jakeloo/dotfiles/archive/master.zip
@@ -45,7 +49,7 @@ fi
 GOROOT="$HOME/workspace/go/root"
 GOPATH="$HOME/workspace/go"
 GOBIN="$GOPATH/bin"
-GO_VERSION="1.17.3"
+GO_VERSION="1.21.3"
 
 if ! [ -d "$GOROOT" ]; then
   curl -sLo /tmp/go.tar.gz https://go.dev/dl/go$GO_VERSION.linux-amd64.tar.gz
