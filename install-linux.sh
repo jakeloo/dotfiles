@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -a
+
 if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
