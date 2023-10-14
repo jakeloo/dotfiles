@@ -78,6 +78,13 @@ if ! [ -d "$HOME/.cargo" ]; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
 fi
 
+# install foundryup
+if ! hash foundryup 2> /dev/null; then
+  curl -L https://foundry.paradigm.xyz | bash
+  source ~/.zshenv
+  foundryup
+fi
+
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 sudo update-alternatives --config editor --skip-auto
 
