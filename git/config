@@ -1,7 +1,10 @@
 [user]
 name=Jake Loo
 email=2171134+jakeloo@users.noreply.github.com
-signingkey=5BF3F0AA545AEA6A
+signingkey=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAz0qalwNVFfjUGvd+jXMEAmy9b6lbUHmhh1+cSS2Tg2
+
+[gpg]
+format=ssh
 
 [commit]
 gpgsign=true
@@ -11,6 +14,10 @@ defaultBranch=main
 
 [pull]
 rebase=true
+
+[push]
+default=current
+autoSetupRemote=true
 
 [fetch]
 prune=true
