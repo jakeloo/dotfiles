@@ -5,7 +5,7 @@ if is_windows
   if empty(glob('$LOCALAPPDATA\nvim\autoload\plug.vim'))
     silent !powershell (md "$env:LOCALAPPDATA\nvim\autoload")
     silent !powershell (New-Object Net.WebClient).DownloadFile(
-          \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim', 
+          \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim',
           \ $env:LOCALAPPDATA + '\nvim\autoload\plug.vim')
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif
@@ -19,7 +19,6 @@ else
   call plug#begin('~/.config/nvim/plugged')
 endif
 
-let g:ale_disable_lsp = 1
 
 " Neobundle
 Plug 'tpope/vim-fugitive'
@@ -31,15 +30,18 @@ Plug 'kien/ctrlp.vim'
 Plug 'rking/ag.vim'
 Plug 'bling/vim-airline'
 Plug 'yegappan/greplace'
-Plug 'sheerun/vim-polyglot'
-Plug 'lervag/vimtex'
 Plug 'preservim/nerdcommenter'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'pantharshit00/vim-prisma'
-Plug 'TovarishFin/vim-solidity'
 Plug 'vyperlang/vim-vyper'
 Plug 'github/copilot.vim'
-Plug 'dense-analysis/ale'
+
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'mfussenegger/nvim-lint'
+Plug 'mhartington/formatter.nvim'
+
 
 " colors
 Plug 'chriskempson/base16-vim'
@@ -50,6 +52,86 @@ call plug#end()
 
 filetype plugin on
 filetype plugin indent on
+
+" mason
+lua << EOF
+require("mason").setup()
+require("mason-lspconfig").setup {
+  ensure_installed = { "solidity_ls_nomicfoundation" },
+  automatic_installation = true
+}
+EOF
+
+" lsp config
+lua << EOF
+require('lspconfig').solidity_ls_nomicfoundation.setup {}
+EOF
+
+"formatter
+nnoremap <silent> <leader>f :Format<CR>
+nnoremap <silent> <leader>F :FormatWrite<CR>
+
+lua << EOF
+local util = require "formatter.util"
+local defaults = require "formatter.defaults"
+
+require("formatter").setup {
+  filetype = {
+    solidity = {
+      function()
+        return {
+          exe = "forge",
+          args = {
+            "fmt",
+            "--raw",
+            "-"
+          },
+          stdin = true,
+        }
+      end
+    },
+
+    ["*"] = {
+      require("formatter.filetypes.any").remove_trailing_whitespace
+    }
+  }
+}
+
+-- Format After Save
+vim.api.nvim_create_augroup("FormatAutogroup", { clear = true })
+
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+  group = "FormatAutogroup",
+  callback = function()
+    local ft = vim.bo.filetype
+    if true then
+      vim.cmd("FormatWrite")
+    end
+  end,
+})
+EOF
+
+
+lua << EOF
+local lsp_util = vim.lsp.util
+
+function code_action_listener()
+  local context = { diagnostics = vim.lsp.diagnostic.get_line_diagnostics() }
+  local params = lsp_util.make_range_params()
+  params.context = context
+  vim.lsp.buf_request(0, 'textDocument/codeAction', params, function(err, result, ctx, config)
+    -- do something with result - e.g. check if empty and show some indication such as a sign
+  end)
+end
+
+vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
+  group = vim.api.nvim_create_augroup("code_action_sign", { clear = true }),
+  callback = function()
+    -- code_action_listener()
+  end,
+})
+EOF
+
 
 " colorsss
 set background=dark
@@ -138,30 +220,23 @@ nmap ,m :NERDTreeFind<CR>
 
 " ctrlp
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|virtualenv|build)|(\.(swp|ico|git|svn|o))$'
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|virtualenv|out|build|artifacts|artifacts_forge)|(\.(swp|ico|git|svn|o))$'
 
 " greplace
 set grepprg=ag
 let g:grep_cmd_opts = '--line-numbers --noheading'
 
-" coc.nvim
-let g:coc_global_extensions = [
-  \ 'coc-clangd',
-  \ 'coc-go',
-  \ 'coc-rls',
-  \ 'coc-pyright',
-  \ 'coc-java',
-  \ 'coc-vimtex',
-  \ 'coc-tsserver',
-  \ 'coc-html',
-  \ 'coc-css',
-  \ 'coc-json',
-  \ 'coc-yaml',
-  \ 'coc-prisma',
-  \ 'coc-eslint',
-  \ 'coc-prettier',
-  \ 'coc-styled-components',
-\ ]
+"treesitter
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "solidity" },
+  sync_install = false,
+  higlight = {
+    enable = true
+  }
+}
+EOF
+autocmd VimEnter * TSEnable highlight
 
 " Some servers have issues with backup files, see #649
 set nobackup
@@ -170,63 +245,7 @@ set nowritebackup
 set updatetime=300
 set shortmess+=c
 set signcolumn=yes
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-autocmd FileType json syntax match Comment +\/\/.\+$+
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-nmap <silent> <F2> <Plug>(coc-rename)
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-xmap <leader> a  <Plug>(coc-codeaction-selected)
-nmap <leader> a  <Plug>(coc-codeaction-selected)
-nmap <leader> ac  <Plug>(coc-codeaction)
-nmap <silent> ca  <Plug>(coc-codeaction)
-nmap <silent> <F4> <Plug>(coc-codeaction)
-nmap <leader> qf  <Plug>(coc-fix-current)
-nmap <silent> [c :call CocAction('diagnosticNext')<cr>
-nmap <silent> ]c :call CocAction('diagnosticPrevious')<cr>
 
 " commenter
 nmap <silent> <C-c> <plug>NERDCommenterInvert<CR>
 xmap <silent> <C-c> <plug>NERDCommenterInvert<CR>
-
-" vimtex
-let g:vimtex_compiler_latexmk = {
-      \ 'options' : [
-      \   '-xelatex',
-      \   '-shell-escape',
-      \   '-silent',
-      \   '-synctex=1',
-      \   '-interaction=nonstopmode',
-      \ ]
-      \}
-
-let g:polyglot_disabled = ['solidity']
-
-let g:ale_linters_explicit = 1
-let g:ale_linters = {
-\  'solidity': ['solhint'],
-\ }
