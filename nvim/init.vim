@@ -57,7 +57,7 @@ filetype plugin indent on
 lua << EOF
 require("mason").setup()
 require("mason-lspconfig").setup {
-  ensure_installed = { "solidity_ls_nomicfoundation" },
+  ensure_installed = { "solidity_ls_nomicfoundation", "biome" },
   automatic_installation = true
 }
 EOF
@@ -65,6 +65,7 @@ EOF
 " lsp config
 lua << EOF
 require('lspconfig').solidity_ls_nomicfoundation.setup {}
+require('lspconfig').biome.setup {}
 EOF
 
 "formatter
@@ -98,16 +99,11 @@ require("formatter").setup {
 }
 
 -- Format After Save
-vim.api.nvim_create_augroup("FormatAutogroup", { clear = true })
-
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  group = "FormatAutogroup",
+vim.api.nvim_create_autocmd("BufWritePre", {
+  buffer = buffer,
   callback = function()
-    local ft = vim.bo.filetype
-    if true then
-      vim.cmd("FormatWrite")
-    end
-  end,
+  vim.lsp.buf.format { async = false }
+  end
 })
 EOF
 
