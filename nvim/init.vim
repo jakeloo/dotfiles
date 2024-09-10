@@ -57,7 +57,7 @@ filetype plugin indent on
 lua << EOF
 require("mason").setup()
 require("mason-lspconfig").setup {
-  ensure_installed = { "solidity_ls_nomicfoundation", "biome" },
+  ensure_installed = { "solidity_ls_nomicfoundation", "biome", "ts_ls" },
   automatic_installation = true
 }
 EOF
@@ -66,6 +66,7 @@ EOF
 lua << EOF
 require('lspconfig').solidity_ls_nomicfoundation.setup {}
 require('lspconfig').biome.setup {}
+require('lspconfig').ts_ls.setup {}
 EOF
 
 "formatter
