@@ -6,9 +6,9 @@ if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-sudo apt-get -y install build-essential libssl-dev software-properties-common 
+sudo apt-get -y install build-essential libssl-dev software-properties-common
 sudo apt-get -y install python-dev python-pip python3-dev python3-pip
-sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip
+sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip ripgrep
 sudo apt-get -y upgrade
 
 if ! $NO_ZSH_INSTALLED; then

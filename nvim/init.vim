@@ -24,18 +24,26 @@ endif
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'gregsexton/gitv'
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'kien/ctrlp.vim'
 Plug 'rking/ag.vim'
 Plug 'bling/vim-airline'
 Plug 'yegappan/greplace'
 Plug 'preservim/nerdcommenter'
+Plug 'nvim-tree/nvim-tree.lua'
+Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'pantharshit00/vim-prisma'
 Plug 'vyperlang/vim-vyper'
 Plug 'github/copilot.vim'
 
+"companion.nvim
+Plug 'nvim-lua/plenary.nvim'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'stevearc/dressing.nvim'
+Plug 'MeanderingProgrammer/render-markdown.nvim'
+Plug 'olimorris/codecompanion.nvim'
+
+" lsp
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
@@ -53,11 +61,15 @@ call plug#end()
 filetype plugin on
 filetype plugin indent on
 
+" treesitter
+let g:loaded_netrw       = 1
+let g:loaded_netrwPlugin = 1
+
 " mason
 lua << EOF
 require("mason").setup()
 require("mason-lspconfig").setup {
-  ensure_installed = { "solidity_ls_nomicfoundation", "biome", "ts_ls" },
+  ensure_installed = { "solidity_ls_nomicfoundation", "biome", "ts_ls", "ruff_lsp", "pyright" },
   automatic_installation = true
 }
 EOF
@@ -67,6 +79,8 @@ lua << EOF
 require('lspconfig').solidity_ls_nomicfoundation.setup {}
 require('lspconfig').biome.setup {}
 require('lspconfig').ts_ls.setup {}
+require('lspconfig').ruff_lsp.setup {}
+require('lspconfig').pyright.setup{}
 EOF
 
 "formatter
@@ -130,6 +144,126 @@ vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
 EOF
 
 
+lua << EOF
+require("codecompanion").setup({
+  strategies = {
+    chat = {
+      adapter = "copilot",
+    },
+    inline = {
+      adapter = "copilot",
+    },
+  },
+  display = {
+    diff = {
+      provider = "mini_diff",
+    },
+  },
+  opts = {
+    log_level = "INFO",
+  },
+})
+
+vim.api.nvim_set_keymap("v", "<LocalLeader>ce", "", {
+  callback = function()
+    require("codecompanion").prompt("explain")
+  end,
+  noremap = true,
+  silent = true,
+})
+vim.api.nvim_set_keymap("n", "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "ga", "<cmd>CodeCompanionChat Add<cr>", { noremap = true, silent = true })
+
+-- Expand 'cc' into 'CodeCompanion' in the command line
+vim.cmd([[cab cc CodeCompanion]])
+EOF
+
+
+"telescope
+lua << EOF
+require('telescope').setup{
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    mappings = {
+      -- i = {
+        -- map actions.which_key to <C-h> (default: <C-/>)
+        -- actions.which_key shows the mappings for your picker,
+        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
+        -- ["<C-h>"] = "which_key"
+      -- }
+    }
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    -- Your extension configuration goes here:
+    -- extension_name = {
+    --   extension_config_key = value,
+    -- }
+    -- please take a look at the readme of the extension you want to configure
+  }
+}
+
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<C-p>', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+EOF
+
+" nvim-tree
+lua << EOF
+require("nvim-tree").setup({
+  view = {
+    width = 30,
+  },
+  filters = {
+    dotfiles = false,
+  },
+  renderer = {
+    group_empty = true,
+    icons = {
+      show = {
+        git = true,
+        file = false,
+        folder = false,
+        folder_arrow = true,
+      },
+      glyphs = {
+        folder = {
+          arrow_closed = "⏵",
+          arrow_open = "⏷",
+        },
+        git = {
+          unstaged = "✗",
+          staged = "✓",
+          unmerged = "⌥",
+          renamed = "➜",
+          untracked = "★",
+          deleted = "⊖",
+          ignored = "◌",
+        },
+      },
+    },
+  },
+})
+
+vim.api.nvim_set_keymap("n", ",n", "<cmd>NvimTreeToggle<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", ",m", "<cmd>NvimTreeFindFile<cr>", { noremap = true, silent = true })
+EOF
+
 " colorsss
 set background=dark
 set termguicolors                " true color
@@ -152,6 +286,11 @@ set softtabstop=2 shiftwidth=2 expandtab
 
 " Set outside file
 set autoread
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+" notification after file change
+autocmd FileChangedShellPost *
+      \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
+
 
 "Copy indent from current line when starting a new line
 set autoindent
@@ -207,18 +346,6 @@ if is_windows
   source $VIMRUNTIME/mswin.vim
 endif
 
-" Nerdtree
-let g:nerdtree_tabs_open_on_gui_startup=0
-let NERDTreeShowHidden=1
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-nmap ,n :NERDTreeToggle<CR>
-nmap ,m :NERDTreeFind<CR>
-
-" ctrlp
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|virtualenv|out|build|artifacts|artifacts_forge)|(\.(swp|ico|git|svn|o))$'
-
 " greplace
 set grepprg=ag
 let g:grep_cmd_opts = '--line-numbers --noheading'
@@ -231,7 +358,7 @@ require'nvim-treesitter.configs'.setup {
   higlight = {
     enable = true
   }
-}
+  }
 EOF
 autocmd VimEnter * TSEnable highlight
 
