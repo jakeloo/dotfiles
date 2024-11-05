@@ -353,12 +353,12 @@ let g:grep_cmd_opts = '--line-numbers --noheading'
 "treesitter
 lua << EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "solidity" },
+  ensure_installed = { "solidity", "lua", "markdown", "markdown_inline", "yaml", "go", "html", "javascript", "python", "rust", "sql", "typescript" },
   sync_install = false,
   higlight = {
     enable = true
   }
-  }
+}
 EOF
 autocmd VimEnter * TSEnable highlight
 
