@@ -61,7 +61,12 @@ tags
 pyvenv.cfg
 .venv
 pip-selfcheck.json
-
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
 ### Windows
 # Windows thumbnail cache files
@@ -134,3 +139,5 @@ Temporary Items
 
 .wrangler
 .pnp*
+ignore-scripts/
+.env

@@ -69,7 +69,7 @@ let g:loaded_netrwPlugin = 1
 lua << EOF
 require("mason").setup()
 require("mason-lspconfig").setup {
-  ensure_installed = { "solidity_ls_nomicfoundation", "biome", "ts_ls", "ruff_lsp", "pyright" },
+  ensure_installed = { "solidity_ls_nomicfoundation", "biome", "ts_ls", "ruff", "pyright" },
   automatic_installation = true
 }
 EOF
@@ -79,7 +79,7 @@ lua << EOF
 require('lspconfig').solidity_ls_nomicfoundation.setup {}
 require('lspconfig').biome.setup {}
 require('lspconfig').ts_ls.setup {}
-require('lspconfig').ruff_lsp.setup {}
+require('lspconfig').ruff.setup {}
 require('lspconfig').pyright.setup{}
 EOF
 
@@ -114,12 +114,12 @@ require("formatter").setup {
 }
 
 -- Format After Save
-vim.api.nvim_create_autocmd("BufWritePre", {
-  buffer = buffer,
-  callback = function()
-  vim.lsp.buf.format { async = false }
-  end
-})
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--  buffer = buffer,
+--  callback = function()
+--  vim.lsp.buf.format { async = false }
+--  end
+-- })
 EOF
 
 

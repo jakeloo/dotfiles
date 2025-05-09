@@ -44,16 +44,21 @@ zinit cdreplay -q
 setopt HIST_IGNORE_SPACE
 bindkey -e
 
-function ssh-reagent() {
-  for agent in /tmp/ssh-*/agent.*; do
-    export SSH_AUTH_SOCK=$agent
+ssh-reagent () {
+  userid=${1-`id -u`}
+  sockets=$(find /tmp -user $userid -ipath '*ssh*agent*' -print 2>/dev/null)
+
+  for sock (${(f)sockets}); do
+    export SSH_AUTH_SOCK=$sock
     if ssh-add -l 2>&1 > /dev/null; then
-      echo Found working SSH Agent:
       ssh-add -l
-      return
+      set +x
+      return 0
     fi
   done
-  echo Cannot find ssh agent - maybe you should reconnect and forward it?
+
+  set +x
+  return 1
 }
 
 if hash keychain 2> /dev/null; then
