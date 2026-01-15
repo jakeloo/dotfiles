@@ -139,5 +139,14 @@ Temporary Items
 
 .wrangler
 .pnp*
+.cdk/
+
 ignore-scripts/
+
 .env
+.env.local
+
+.mcp.json
+
+**/.claude/settings.local.json
+CLAUDE.local.md

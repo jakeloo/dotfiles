@@ -61,6 +61,43 @@ ssh-reagent () {
   return 1
 }
 
+dotenv() {
+  local envfile="${1:-.env}"
+
+  if [[ ! -f "$envfile" ]]; then
+    echo "❌ File not found: $envfile"
+    return 1
+  fi
+
+  # Export variables, ignoring comments and blank lines
+  export $(grep -v '^#' "$envfile" | xargs)
+  echo "✅ Environment variables loaded from $envfile"
+}
+
+aws-mfa() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: aws-mfa <token-code> [account-id] [username]"
+    return 1
+  fi
+
+  local token="$1"
+  local account="${2:-016609318326}"
+  local username="${3:-thirdweb-jakeloo}"
+
+  eval $(aws sts get-session-token \
+    --serial-number "arn:aws:iam::${account}:mfa/${username}" \
+    --token-code "$token" \
+    --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
+    --output text | awk '{print "export AWS_ACCESS_KEY_ID="$1" AWS_SECRET_ACCESS_KEY="$2" AWS_SESSION_TOKEN="$3}')
+
+  echo "AWS session token set for ${username}@${account} (valid for 12 hours)"
+}
+
+if [ -n "${TMUX}" ]; then
+    eval "$(tmux show-environment -s)"
+fi
+
+
 if hash keychain 2> /dev/null; then
   eval `keychain --eval id_rsa --noask 2> /dev/null`
 fi

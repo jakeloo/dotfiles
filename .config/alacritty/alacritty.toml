@@ -1,0 +1,177 @@
+# Alacritty Configuration - Readability & Productivity Focus
+
+[env]
+TERM = "xterm-256color"
+
+[window]
+padding = { x = 4, y = 4 }
+decorations = "full"
+opacity = 1.0
+dynamic_title = true
+decorations_theme_variant = "Dark"
+startup_mode = "Maximized"
+
+[scrolling]
+history = 50000
+multiplier = 3
+
+[font]
+size = 14.0
+
+[font.normal]
+family = "Menlo"
+style = "Regular"
+
+[font.bold]
+family = "Menlo"
+style = "Bold"
+
+[font.italic]
+family = "Menlo"
+style = "Italic"
+
+[font.bold_italic]
+family = "Menlo"
+style = "Bold Italic"
+
+[font.offset]
+x = 0
+y = 1
+
+# Base16 Ocean (modernized) - deep blue-gray with refined accents
+[colors.primary]
+background = "#2b303b"
+foreground = "#c0c5ce"
+
+[colors.cursor]
+text = "#2b303b"
+cursor = "#c0c5ce"
+
+[colors.vi_mode_cursor]
+text = "#2b303b"
+cursor = "#96b5b4"
+
+[colors.selection]
+background = "#4f5b66"
+text = "CellForeground"
+
+[colors.search.matches]
+foreground = "#2b303b"
+background = "#ebcb8b"
+
+[colors.search.focused_match]
+foreground = "#2b303b"
+background = "#d08770"
+
+[colors.normal]
+black = "#343d46"
+red = "#bf616a"
+green = "#a3be8c"
+yellow = "#ebcb8b"
+blue = "#8fa1b3"
+magenta = "#b48ead"
+cyan = "#96b5b4"
+white = "#c0c5ce"
+
+[colors.bright]
+black = "#65737e"
+red = "#d08770"
+green = "#a3be8c"
+yellow = "#ebcb8b"
+blue = "#8fa1b3"
+magenta = "#b48ead"
+cyan = "#96b5b4"
+white = "#eff1f5"
+
+[cursor]
+style = { shape = "Block", blinking = "On" }
+blink_interval = 750
+blink_timeout = 0
+unfocused_hollow = true
+
+[selection]
+save_to_clipboard = true
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+[mouse]
+hide_when_typing = true
+
+[[mouse.bindings]]
+mouse = "Middle"
+action = "PasteSelection"
+
+# Productivity keybindings
+[[keyboard.bindings]]
+key = "N"
+mods = "Control|Shift"
+action = "SpawnNewInstance"
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Control|Shift"
+action = "SpawnNewInstance"
+
+[[keyboard.bindings]]
+key = "F"
+mods = "Control|Shift"
+action = "SearchForward"
+
+[[keyboard.bindings]]
+key = "B"
+mods = "Control|Shift"
+action = "SearchBackward"
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Control|Shift"
+action = "Copy"
+
+[[keyboard.bindings]]
+key = "V"
+mods = "Control|Shift"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "Plus"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Control"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Control"
+action = "ResetFontSize"
+
+[[keyboard.bindings]]
+key = "L"
+mods = "Control"
+action = "ClearLogNotice"
+
+[[keyboard.bindings]]
+key = "PageUp"
+mods = "Shift"
+action = "ScrollPageUp"
+
+[[keyboard.bindings]]
+key = "PageDown"
+mods = "Shift"
+action = "ScrollPageDown"
+
+[[keyboard.bindings]]
+key = "Home"
+mods = "Shift"
+action = "ScrollToTop"
+
+[[keyboard.bindings]]
+key = "End"
+mods = "Shift"
+action = "ScrollToBottom"
+
+[hints]
+enabled = [
+  { regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+", hyperlinks = true, command = "xdg-open", post_processing = true, persist = false, mouse = { enabled = true, mods = "None" }, binding = { key = "U", mods = "Control|Shift" } }
+]
