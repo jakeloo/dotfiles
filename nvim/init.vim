@@ -46,6 +46,7 @@ Plug 'olimorris/codecompanion.nvim'
 " lsp
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'WhoIsSethDaniel/mason-tool-installer.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'mfussenegger/nvim-lint'
 Plug 'mhartington/formatter.nvim'
@@ -67,20 +68,36 @@ let g:loaded_netrwPlugin = 1
 
 " mason
 lua << EOF
-require("mason").setup()
-require("mason-lspconfig").setup {
-  ensure_installed = { "solidity_ls_nomicfoundation", "biome", "ts_ls", "ruff", "pyright" },
-  automatic_installation = true
+-- Mason tools (source of truth) - all tools to install across machines
+-- Run :MasonToolsInstall to manually sync, or auto-installs on startup
+local mason_tools = {
+  -- LSP servers
+  "biome",
+  "pyright",
+  "ruff",
+  "solidity_ls_nomicfoundation",
+  "ts_ls",
+
+  -- Linters (oxlint for JS/TS)
+  "oxlint",
 }
+
+require("mason").setup()
+require("mason-tool-installer").setup({
+  ensure_installed = mason_tools,
+  auto_update = false,
+  run_on_start = true,
+})
 EOF
 
-" lsp config
+" lsp config (nvim 0.11+ native API)
 lua << EOF
-require('lspconfig').solidity_ls_nomicfoundation.setup {}
-require('lspconfig').biome.setup {}
-require('lspconfig').ts_ls.setup {}
-require('lspconfig').ruff.setup {}
-require('lspconfig').pyright.setup{}
+vim.lsp.config('solidity_ls_nomicfoundation', {})
+vim.lsp.config('biome', {})
+vim.lsp.config('ts_ls', {})
+vim.lsp.config('ruff', {})
+vim.lsp.config('pyright', {})
+vim.lsp.enable({'solidity_ls_nomicfoundation', 'biome', 'ts_ls', 'ruff', 'pyright'})
 EOF
 
 "formatter
@@ -350,17 +367,44 @@ endif
 set grepprg=ag
 let g:grep_cmd_opts = '--line-numbers --noheading'
 
-"treesitter
+"treesitter (nvim 0.11+ native highlighting)
 lua << EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "solidity", "lua", "markdown", "markdown_inline", "yaml", "go", "html", "javascript", "python", "rust", "sql", "typescript" },
-  sync_install = false,
-  higlight = {
-    enable = true
-  }
+-- Parser list (source of truth) - run :TSSync to install
+local ts_parsers = {
+  "bash",
+  "css",
+  "go",
+  "html",
+  "javascript",
+  "json",
+  "lua",
+  "markdown",
+  "markdown_inline",
+  "python",
+  "rust",
+  "solidity",
+  "sql",
+  "typescript",
+  "yaml",
 }
+
+-- Command to install all configured parsers
+vim.api.nvim_create_user_command("TSSync", function()
+  local installed = 0
+  for _, lang in ipairs(ts_parsers) do
+    local ok = pcall(vim.cmd, "TSInstall " .. lang)
+    if ok then installed = installed + 1 end
+  end
+  print("TSSync: Installing " .. installed .. " parsers...")
+end, { desc = "Install all configured treesitter parsers" })
+
+-- Enable native treesitter highlighting for supported filetypes
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function()
+    pcall(vim.treesitter.start)
+  end,
+})
 EOF
-autocmd VimEnter * TSEnable highlight
 
 " Some servers have issues with backup files, see #649
 set nobackup
