@@ -97,6 +97,7 @@ if [ -n "${TMUX}" ]; then
     eval "$(tmux show-environment -s)"
 fi
 
+[ -f ~/workspace/.secrets/shellrc ] && source ~/workspace/.secrets/shellrc
 
 if hash keychain 2> /dev/null; then
   eval `keychain --eval id_rsa --noask 2> /dev/null`
@@ -114,4 +115,3 @@ export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOROOT
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$VOLTA_HOME/bin:$PATH
-
