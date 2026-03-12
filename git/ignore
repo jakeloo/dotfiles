@@ -35,6 +35,26 @@
 ### GPG
 secring.*
 
+### Astro
+node_modules/
+/triage/
+/.compiler/
+dist/
+temp/
+*.tsbuildinfo
+.DS_Store
+.vercel
+.netlify
+_site/
+.astro/
+test-results/
+*.log
+package-lock.json
+.turbo/
+.eslintcache
+.pnpm-store
+.vscode-test/
+
 ### Vim
 # Swap
 [._]*.s[a-v][a-z]
