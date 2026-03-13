@@ -53,6 +53,16 @@ if hash node 2> /dev/null; then
   $HOME/.volta/bin/volta install node
 fi
 
+# claude code
+if ! $HOME/.volta/bin/npm list -g @anthropic-ai/claude-code 2>/dev/null | grep -q '@anthropic-ai/claude-code'; then
+  $HOME/.volta/bin/npm install -g @anthropic-ai/claude-code
+fi
+
+# codex
+if ! $HOME/.volta/bin/npm list -g @openai/codex 2>/dev/null | grep -q '@openai/codex'; then
+  $HOME/.volta/bin/npm install -g @openai/codex
+fi
+
 # install rust
 if ! [ -d "$HOME/.cargo" ]; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
