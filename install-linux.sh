@@ -8,7 +8,7 @@ fi
 
 sudo apt-get -y install build-essential libssl-dev software-properties-common
 sudo apt-get -y install python-dev python-pip python3-dev python3-pip
-sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip ripgrep
+sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip ripgrep gh
 sudo apt-get -y upgrade
 
 if ! $NO_ZSH_INSTALLED; then
@@ -71,6 +71,16 @@ fi
 # node
 if ! hash node 2> /dev/null; then
   $HOME/.volta/bin/volta install node
+fi
+
+# claude code
+if ! hash claude 2>/dev/null; then
+  curl -fsSL https://claude.ai/install.sh | bash
+fi
+
+# codex
+if ! $HOME/.volta/bin/npm list -g @openai/codex 2>/dev/null | grep -q '@openai/codex'; then
+  $HOME/.volta/bin/npm install -g @openai/codex
 fi
 
 # install rust
