@@ -63,6 +63,16 @@ if ! $HOME/.volta/bin/npm list -g @openai/codex 2>/dev/null | grep -q '@openai/c
   $HOME/.volta/bin/npm install -g @openai/codex
 fi
 
+# pnpm
+if ! hash pnpm 2>/dev/null; then
+  curl -fsSL https://get.pnpm.io/install.sh | sh -
+fi
+
+# uv
+if ! hash uv 2>/dev/null; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
 # install rust
 if ! [ -d "$HOME/.cargo" ]; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
