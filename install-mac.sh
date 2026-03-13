@@ -13,7 +13,7 @@ if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-/opt/homebrew/bin/brew install zsh the_silver_searcher tmux neovim git reattach-to-user-namespace tig go ripgrep
+/opt/homebrew/bin/brew install zsh the_silver_searcher tmux neovim git reattach-to-user-namespace tig go ripgrep gh
 
 if ! $NO_ZSH_INSTALLED; then
   echo "Setting ZSH as default shell"
@@ -54,8 +54,8 @@ if hash node 2> /dev/null; then
 fi
 
 # claude code
-if ! $HOME/.volta/bin/npm list -g @anthropic-ai/claude-code 2>/dev/null | grep -q '@anthropic-ai/claude-code'; then
-  $HOME/.volta/bin/npm install -g @anthropic-ai/claude-code
+if ! hash claude 2>/dev/null; then
+  curl -fsSL https://claude.ai/install.sh | bash
 fi
 
 # codex

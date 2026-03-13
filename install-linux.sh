@@ -8,7 +8,7 @@ fi
 
 sudo apt-get -y install build-essential libssl-dev software-properties-common
 sudo apt-get -y install python-dev python-pip python3-dev python3-pip
-sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip ripgrep
+sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip ripgrep gh
 sudo apt-get -y upgrade
 
 if ! $NO_ZSH_INSTALLED; then
@@ -74,8 +74,8 @@ if ! hash node 2> /dev/null; then
 fi
 
 # claude code
-if ! $HOME/.volta/bin/npm list -g @anthropic-ai/claude-code 2>/dev/null | grep -q '@anthropic-ai/claude-code'; then
-  $HOME/.volta/bin/npm install -g @anthropic-ai/claude-code
+if ! hash claude 2>/dev/null; then
+  curl -fsSL https://claude.ai/install.sh | bash
 fi
 
 # codex
