@@ -107,11 +107,14 @@ alias initkc='eval `keychain --eval id_rsa`'
 export GPG_TTY=$(tty)
 
 export EDITOR='nvim'
-export VOLTA_HOME=$HOME/.volta
 export GOROOT=$HOME/workspace/go/root/go
 export GOPATH=$HOME/workspace/go
 export GOBIN=$GOPATH/bin
 export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$GOROOT/bin:$GOBIN:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
-export PATH=$VOLTA_HOME/bin:$PATH
+
+# fnm (node version manager)
+if command -v fnm &> /dev/null; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
+fi
