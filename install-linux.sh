@@ -1,15 +1,38 @@
 #!/bin/bash
 
-set -a
+set -euo pipefail
+
+NO_ZSH_INSTALLED=false
+NEOVIM_VERSION="0.12.1"
+NODE_VERSION="24.14.1"
+PYTHON_VERSION="3.14.3"
+RUST_VERSION="1.94.1"
+GO_VERSION="1.26.1"
 
 if ! [ -f "/bin/zsh" ]; then
   NO_ZSH_INSTALLED=true
 fi
 
-sudo apt-get -y install build-essential libssl-dev software-properties-common
-sudo apt-get -y install python-dev python-pip python3-dev python3-pip
-sudo apt-get -y install zsh silversearcher-ag tmux git tig unzip ripgrep gh
+sudo apt-get update
 sudo apt-get -y upgrade
+sudo apt-get -y install \
+  build-essential \
+  software-properties-common \
+  ca-certificates \
+  curl \
+  wget \
+  unzip \
+  git \
+  gh \
+  tig \
+  jq \
+  htop \
+  tree \
+  ripgrep \
+  silversearcher-ag \
+  tmux \
+  zsh \
+  libssl-dev
 
 if ! $NO_ZSH_INSTALLED; then
   echo "Setting ZSH as default shell"
@@ -18,14 +41,18 @@ fi
 
 # nvim
 cd /tmp
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
-chmod u+x nvim.appimage
-./nvim.appimage --appimage-extract
-mkdir -p $HOME/app/nvim
-mv squashfs-root $HOME/app/nvim
-sudo ln -s $HOME/app/nvim/squashfs-root/AppRun /usr/bin/nvim
+case "$(uname -m)" in
+  x86_64) NVIM_ARCH="x86_64" ;;
+  aarch64|arm64) NVIM_ARCH="arm64" ;;
+  *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+curl -fsSLo /tmp/nvim.tar.gz "https://github.com/neovim/neovim/releases/download/v${NEOVIM_VERSION}/nvim-linux-${NVIM_ARCH}.tar.gz"
+mkdir -p "$HOME/app"
+rm -rf "$HOME/app/nvim-linux-${NVIM_ARCH}"
+tar -C "$HOME/app" -xzf /tmp/nvim.tar.gz
+sudo ln -sfn "$HOME/app/nvim-linux-${NVIM_ARCH}/bin/nvim" /usr/bin/nvim
 
-# tailgate
+# tailscale
 curl -fsSL https://tailscale.com/install.sh | sh
 
 # install .zshrc, nvim, tmux config
@@ -44,23 +71,26 @@ cp -a dotfiles-master/gnupg ~/.gnupg
 
 # install tpm
 if ! [ -d "$HOME/.tmux/plugins/tpm" ]; then
-  git clone --depth=1 https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+  git clone --depth=1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 fi
 
 # install go and gopls
 GOROOT="$HOME/workspace/go/root"
 GOPATH="$HOME/workspace/go"
 GOBIN="$GOPATH/bin"
-GO_VERSION="1.24.5"
+mkdir -p "$GOPATH"
 
-if ! [ -d "$GOROOT" ]; then
-  curl -sLo /tmp/go.tar.gz https://go.dev/dl/go$GO_VERSION.linux-amd64.tar.gz
-  mkdir -p $GOROOT
-  tar -C $GOROOT -xzf /tmp/go.tar.gz
+if ! [ -x "$GOROOT/go/bin/go" ] || ! "$GOROOT/go/bin/go" version | grep -q "go${GO_VERSION}"; then
+  curl -fsSLo /tmp/go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
+  rm -rf "$GOROOT"
+  mkdir -p "$GOROOT"
+  tar -C "$GOROOT" -xzf /tmp/go.tar.gz
 fi
 
+export PATH="$GOROOT/go/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+
 if ! [ -f "$GOBIN/gopls" ]; then
-  $GOROOT/go/bin/go get golang.org/x/tools/gopls
+  "$GOROOT/go/bin/go" install golang.org/x/tools/gopls@latest
 fi
 
 # fnm (node version manager)
@@ -68,15 +98,14 @@ if ! command -v fnm &> /dev/null; then
   curl -fsSL https://fnm.vercel.app/install | bash
 fi
 
-# node
-if ! hash node 2> /dev/null; then
-  eval "$(fnm env)"
-  fnm install --lts
-fi
+export PATH="$HOME/.local/share/fnm:$PATH"
+eval "$(fnm env --shell bash)"
+fnm install "$NODE_VERSION"
+fnm default "$NODE_VERSION"
 
 # claude code
-if ! hash claude 2>/dev/null; then
-  curl -fsSL https://claude.ai/install.sh | bash
+if ! npm list -g @anthropic-ai/claude-code 2>/dev/null | grep -q '@anthropic-ai/claude-code'; then
+  npm install -g @anthropic-ai/claude-code
 fi
 
 # codex
@@ -89,28 +118,41 @@ if ! hash pnpm 2>/dev/null; then
   curl -fsSL https://get.pnpm.io/install.sh | sh -
 fi
 
-# uv
+# uv and python
 if ! hash uv 2>/dev/null; then
   curl -LsSf https://astral.sh/uv/install.sh | sh
+  export PATH="$HOME/.local/bin:$PATH"
 fi
+uv python install "$PYTHON_VERSION"
 
 # install rust
 if ! [ -d "$HOME/.cargo" ]; then
-  curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=stable --profile=default
+  curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
+rustup toolchain install "$RUST_VERSION"
+rustup default "$RUST_VERSION"
+
+# bun
+if ! hash bun 2>/dev/null; then
+  curl -fsSL https://bun.sh/install | bash
+  export PATH="$HOME/.bun/bin:$PATH"
 fi
 
 # install foundryup
 if ! hash foundryup 2> /dev/null; then
   curl -L https://foundry.paradigm.xyz | bash
-  source ~/.zshenv
+  if [ -f "$HOME/.zshenv" ]; then
+    source "$HOME/.zshenv"
+  fi
   foundryup
 fi
 
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
-sudo update-alternatives --config editor --skip-auto
+sudo update-alternatives --set editor /usr/bin/nvim
 
 # install nvim plugins
 nvim +PlugInstall +qa
 
-echo "Run: Connecting tailscale. `tailscale up`"
-echo "Run: Set ZSH default shell. `chsh -s $(which zsh)`"
+echo "Run: Connecting tailscale. \`tailscale up\`"
+echo "Run: Set ZSH default shell. \`chsh -s $(which zsh)\`"
