@@ -43,14 +43,15 @@ if ! [ -f "$HOME/workspace/go/bin/gopls" ]; then
   /usr/local/bin/go get golang.org/x/tools/gopls
 fi
 
-# volta
-if ! [ -d "$HOME/.volta" ]; then
-  curl https://get.volta.sh | bash
+# fnm (node version manager)
+if ! command -v fnm &> /dev/null; then
+  /opt/homebrew/bin/brew install fnm
 fi
 
 # node
-if hash node 2> /dev/null; then
-  $HOME/.volta/bin/volta install node
+if ! hash node 2> /dev/null; then
+  eval "$(fnm env)"
+  fnm install --lts
 fi
 
 # claude code
@@ -59,8 +60,8 @@ if ! hash claude 2>/dev/null; then
 fi
 
 # codex
-if ! $HOME/.volta/bin/npm list -g @openai/codex 2>/dev/null | grep -q '@openai/codex'; then
-  $HOME/.volta/bin/npm install -g @openai/codex
+if ! npm list -g @openai/codex 2>/dev/null | grep -q '@openai/codex'; then
+  npm install -g @openai/codex
 fi
 
 # pnpm
