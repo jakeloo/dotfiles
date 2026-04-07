@@ -1,3 +1,7 @@
+if [ -z "${ZSH_VERSION:-}" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+
 if [[ "$(uname -r)" =~ Microsoft$ ]]; then
   umask 0022
 fi

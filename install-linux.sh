@@ -35,8 +35,11 @@ sudo apt-get -y install \
   libssl-dev
 
 if ! $NO_ZSH_INSTALLED; then
-  echo "Setting ZSH as default shell"
-  chsh -s /bin/zsh
+  CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+  if [ "$CURRENT_SHELL" != "/bin/zsh" ]; then
+    echo "Setting ZSH as default shell"
+    sudo usermod -s /bin/zsh "$USER"
+  fi
 fi
 
 # nvim
