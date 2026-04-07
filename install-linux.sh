@@ -139,15 +139,6 @@ if ! hash bun 2>/dev/null; then
   export PATH="$HOME/.bun/bin:$PATH"
 fi
 
-# install foundryup
-if ! hash foundryup 2> /dev/null; then
-  curl -L https://foundry.paradigm.xyz | bash
-  if [ -f "$HOME/.zshenv" ]; then
-    source "$HOME/.zshenv"
-  fi
-  foundryup
-fi
-
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 sudo update-alternatives --set editor /usr/bin/nvim
 
