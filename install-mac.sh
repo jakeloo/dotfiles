@@ -8,7 +8,6 @@ else
   HOMEBREW_BIN="/opt/homebrew/bin/brew"
 fi
 NO_ZSH_INSTALLED=false
-NEOVIM_VERSION="0.12.1"
 NODE_VERSION="24.14.1"
 PYTHON_VERSION="3.14.3"
 RUST_VERSION="1.94.1"
@@ -31,6 +30,7 @@ fi
 
 "$HOMEBREW_BIN" install \
   zsh \
+  neovim \
   the_silver_searcher \
   tmux \
   git \
@@ -45,22 +45,12 @@ fi
   fnm
 
 if ! $NO_ZSH_INSTALLED; then
-  echo "Setting ZSH as default shell"
-  chsh -s /bin/zsh
+  CURRENT_SHELL="$(dscl . -read "/Users/$USER" UserShell 2>/dev/null | awk '{print $2}')"
+  if [ "$CURRENT_SHELL" != "/bin/zsh" ]; then
+    echo "Setting ZSH as default shell"
+    chsh -s /bin/zsh
+  fi
 fi
-
-# nvim
-cd /tmp
-case "$(uname -m)" in
-  arm64) NVIM_ARCH="arm64" ;;
-  x86_64) NVIM_ARCH="x86_64" ;;
-  *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
-esac
-curl -fsSLo /tmp/nvim.tar.gz "https://github.com/neovim/neovim/releases/download/v${NEOVIM_VERSION}/nvim-macos-${NVIM_ARCH}.tar.gz"
-mkdir -p "$HOME/app"
-rm -rf "$HOME/app/nvim-macos-${NVIM_ARCH}"
-tar -C "$HOME/app" -xzf /tmp/nvim.tar.gz
-sudo ln -sfn "$HOME/app/nvim-macos-${NVIM_ARCH}/bin/nvim" /usr/local/bin/nvim
 
 # install .zshrc, nvim, tmux config
 curl -sLo /tmp/dotfiles.zip https://github.com/jakeloo/dotfiles/archive/master.zip
@@ -147,6 +137,6 @@ if ! hash bun 2>/dev/null; then
 fi
 
 # install nvim plugins
-/usr/local/bin/nvim +PlugInstall +qa
+nvim +PlugInstall +qa
 
 echo "Run: Set ZSH default shell. \`chsh -s $(which zsh)\`"
