@@ -42,7 +42,11 @@ fi
   htop \
   tree \
   wget \
-  fnm
+  fnm \
+  pnpm \
+  uv \
+  bun \
+  rustup
 
 if ! $NO_ZSH_INSTALLED; then
   CURRENT_SHELL="$(dscl . -read "/Users/$USER" UserShell 2>/dev/null | awk '{print $2}')"
@@ -110,31 +114,16 @@ if ! npm list -g @openai/codex 2>/dev/null | grep -q '@openai/codex'; then
   npm install -g @openai/codex
 fi
 
-# pnpm
-if ! hash pnpm 2>/dev/null; then
-  curl -fsSL https://get.pnpm.io/install.sh | sh -
-fi
-
-# uv and python
-if ! hash uv 2>/dev/null; then
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  export PATH="$HOME/.local/bin:$PATH"
-fi
+# python via uv
 uv python install "$PYTHON_VERSION"
 
-# install rust
+# rust via rustup
 if ! [ -d "$HOME/.cargo" ]; then
-  curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal
+  rustup-init -y --profile minimal --no-modify-path
   export PATH="$HOME/.cargo/bin:$PATH"
 fi
 rustup toolchain install "$RUST_VERSION"
 rustup default "$RUST_VERSION"
-
-# bun
-if ! hash bun 2>/dev/null; then
-  curl -fsSL https://bun.sh/install | bash
-  export PATH="$HOME/.bun/bin:$PATH"
-fi
 
 # install nvim plugins
 nvim +PlugInstall +qa
