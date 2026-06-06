@@ -6,6 +6,19 @@ if [[ "$(uname -r)" =~ Microsoft$ ]]; then
   umask 0022
 fi
 
+# Force a UTF-8 locale so tmux and others render unicode without needing `tmux -u`.
+# Modern tmux detects UTF-8 solely from the locale, so the fix lives here, not in tmux.conf.
+if ! locale 2>/dev/null | grep -qiE 'utf-?8'; then
+  if locale -a 2>/dev/null | grep -qix 'en_US.UTF-8'; then
+    export LANG='en_US.UTF-8'
+  elif locale -a 2>/dev/null | grep -qix 'C.UTF-8'; then
+    export LANG='C.UTF-8'
+  else
+    export LANG='en_US.UTF-8'
+  fi
+  export LC_CTYPE="$LANG"
+fi
+
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 if [[ ! -d ${ZINIT_HOME} ]]; then
   mkdir -p "$(dirname $ZINIT_HOME)"
