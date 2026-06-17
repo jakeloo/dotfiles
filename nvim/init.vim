@@ -75,7 +75,6 @@ local mason_tools = {
   "biome",
   "pyright",
   "ruff",
-  "solidity_ls_nomicfoundation",
   "ts_ls",
 
   -- Linters (oxlint for JS/TS)
@@ -92,12 +91,11 @@ EOF
 
 " lsp config (nvim 0.11+ native API)
 lua << EOF
-vim.lsp.config('solidity_ls_nomicfoundation', {})
 vim.lsp.config('biome', {})
 vim.lsp.config('ts_ls', {})
 vim.lsp.config('ruff', {})
 vim.lsp.config('pyright', {})
-vim.lsp.enable({'solidity_ls_nomicfoundation', 'biome', 'ts_ls', 'ruff', 'pyright'})
+vim.lsp.enable({'biome', 'ts_ls', 'ruff', 'pyright'})
 EOF
 
 "formatter

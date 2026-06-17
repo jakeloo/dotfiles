@@ -1,131 +1,96 @@
 #!/bin/bash
+#
+# macOS bootstrap. Wrapped in main() and invoked on the last line so a truncated
+# `curl | bash` download never executes a partial script.
 
 set -euo pipefail
 
-if command -v brew >/dev/null 2>&1; then
-  HOMEBREW_BIN="$(command -v brew)"
-else
-  HOMEBREW_BIN="/opt/homebrew/bin/brew"
-fi
-NO_ZSH_INSTALLED=false
-NODE_VERSION="24.14.1"
-PYTHON_VERSION="3.14.3"
-RUST_VERSION="1.94.1"
-GO_VERSION="1.26.1"
-
-# Update xcode
-xcode-select --install 2> /dev/null || true
-
-# Install brew
-if ! [ -f "$HOMEBREW_BIN" ]; then
-  echo "Installing Homebrew"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-export PATH="$(dirname "$HOMEBREW_BIN"):$PATH"
-
-if ! [ -f "/bin/zsh" ]; then
-  NO_ZSH_INSTALLED=true
-fi
-
-"$HOMEBREW_BIN" install \
-  zsh \
-  neovim \
-  the_silver_searcher \
-  tmux \
-  git \
-  reattach-to-user-namespace \
-  tig \
-  ripgrep \
-  gh \
-  jq \
-  htop \
-  tree \
-  wget \
-  fnm \
-  pnpm \
-  uv \
-  bun \
-  rustup
-
-if ! $NO_ZSH_INSTALLED; then
-  CURRENT_SHELL="$(dscl . -read "/Users/$USER" UserShell 2>/dev/null | awk '{print $2}')"
-  if [ "$CURRENT_SHELL" != "/bin/zsh" ]; then
-    echo "Setting ZSH as default shell"
-    chsh -s /bin/zsh
+main() {
+  local HOMEBREW_BIN
+  if command -v brew >/dev/null 2>&1; then
+    HOMEBREW_BIN="$(command -v brew)"
+  else
+    HOMEBREW_BIN="/opt/homebrew/bin/brew"
   fi
-fi
+  local NO_ZSH_INSTALLED=false
 
-# install .zshrc, nvim, tmux config
-curl -sLo /tmp/dotfiles.zip https://github.com/jakeloo/dotfiles/archive/master.zip
+  # Update xcode
+  xcode-select --install 2>/dev/null || true
 
-cd /tmp
-mkdir -p ~/.config
-unzip -o dotfiles.zip
-cp dotfiles-master/zsh/.zshrc ~/.zshrc
-cp dotfiles-master/dircolors/bliss.dircolors ~/.dircolors
-cp dotfiles-master/tmux/.tmux.conf ~
-cp -a dotfiles-master/nvim ~/.config
-cp -a dotfiles-master/git ~/.config
-cp -a dotfiles-master/gnupg ~/.gnupg
+  # Install brew
+  if ! [ -f "$HOMEBREW_BIN" ]; then
+    echo "Installing Homebrew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
 
-# install tpm
-if ! [ -d "$HOME/.tmux/plugins/tpm" ]; then
-  git clone --depth=1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
-fi
+  local HOMEBREW_DIR
+  HOMEBREW_DIR="$(dirname "$HOMEBREW_BIN")"
+  export PATH="$HOMEBREW_DIR:$PATH"
 
-# install go and gopls
-GOROOT="$HOME/workspace/go/root"
-GOPATH="$HOME/workspace/go"
-GOBIN="$GOPATH/bin"
-mkdir -p "$GOPATH"
+  if ! [ -f "/bin/zsh" ]; then
+    NO_ZSH_INSTALLED=true
+  fi
 
-case "$(uname -m)" in
-  arm64) GO_ARCH="arm64" ;;
-  x86_64) GO_ARCH="amd64" ;;
-esac
+  # Packages, plus the toolchain bootstrappers (fnm/uv/rustup/bun/pnpm) that the
+  # shared install steps pin specific versions of.
+  "$HOMEBREW_BIN" install \
+    zsh \
+    neovim \
+    the_silver_searcher \
+    tmux \
+    git \
+    reattach-to-user-namespace \
+    tig \
+    ripgrep \
+    gh \
+    jq \
+    htop \
+    tree \
+    wget \
+    fnm \
+    pnpm \
+    uv \
+    bun \
+    rustup
 
-if ! [ -x "$GOROOT/go/bin/go" ] || ! "$GOROOT/go/bin/go" version | grep -q "go${GO_VERSION}"; then
-  curl -fsSLo /tmp/go.tar.gz "https://go.dev/dl/go${GO_VERSION}.darwin-${GO_ARCH}.tar.gz"
-  rm -rf "$GOROOT"
-  mkdir -p "$GOROOT"
-  tar -C "$GOROOT" -xzf /tmp/go.tar.gz
-fi
+  if ! $NO_ZSH_INSTALLED; then
+    local CURRENT_SHELL
+    CURRENT_SHELL="$(dscl . -read "/Users/$USER" UserShell 2>/dev/null | awk '{print $2}')"
+    if [ "$CURRENT_SHELL" != "/bin/zsh" ]; then
+      echo "Setting ZSH as default shell"
+      chsh -s /bin/zsh
+    fi
+  fi
 
-export PATH="$GOROOT/go/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+  # Bootstrap rustup itself (brew ships rustup-init, not an initialized toolchain).
+  if ! [ -d "$HOME/.cargo" ]; then
+    rustup-init -y --profile minimal --no-modify-path
+  fi
 
-if ! [ -f "$GOBIN/gopls" ]; then
-  "$GOROOT/go/bin/go" install golang.org/x/tools/gopls@latest
-fi
+  # Fetch the dotfiles repo: source of truth for versions, shared install
+  # functions, and the config files themselves.
+  local DOTFILES_REF="${DOTFILES_REF:-master}"
+  local DOTFILES="/tmp/dotfiles-${DOTFILES_REF}"
+  curl -fsSLo /tmp/dotfiles.zip "https://github.com/jakeloo/dotfiles/archive/${DOTFILES_REF}.zip"
+  rm -rf "$DOTFILES"
+  unzip -qo /tmp/dotfiles.zip -d /tmp
 
-# node
-export PATH="$HOME/.local/share/fnm:$PATH"
-eval "$(fnm env --shell bash)"
-fnm install "$NODE_VERSION"
-fnm default "$NODE_VERSION"
+  # shellcheck source=versions.env
+  . "$DOTFILES/versions.env"
+  # shellcheck source=lib/common.sh
+  . "$DOTFILES/lib/common.sh"
 
-# claude code
-if ! npm list -g @anthropic-ai/claude-code 2>/dev/null | grep -q '@anthropic-ai/claude-code'; then
-  npm install -g @anthropic-ai/claude-code
-fi
+  install_config "$DOTFILES"
+  install_tpm
+  install_go
+  install_gopls
+  install_node
+  install_agents
+  install_python
+  install_rust
+  install_nvim_plugins
 
-# codex
-if ! npm list -g @openai/codex 2>/dev/null | grep -q '@openai/codex'; then
-  npm install -g @openai/codex
-fi
+  echo "Run: Set ZSH default shell. \`chsh -s $(which zsh)\`"
+}
 
-# python via uv
-uv python install "$PYTHON_VERSION"
-
-# rust via rustup
-if ! [ -d "$HOME/.cargo" ]; then
-  rustup-init -y --profile minimal --no-modify-path
-  export PATH="$HOME/.cargo/bin:$PATH"
-fi
-rustup toolchain install "$RUST_VERSION"
-rustup default "$RUST_VERSION"
-
-# install nvim plugins
-nvim +PlugInstall +qa
-
-echo "Run: Set ZSH default shell. \`chsh -s $(which zsh)\`"
+main "$@"
