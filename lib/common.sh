@@ -47,11 +47,23 @@ install_config() {
 # bin/install_plugins is the non-interactive equivalent of `prefix + I`; without
 # it a fresh machine has no tmux plugins until you trigger them by hand.
 # Requires .tmux.conf to already be in place (run after install_config).
+#
+# TPM resolves the plugin install directory from the TMUX_PLUGIN_MANAGER_PATH
+# our .tmux.conf sets when a tmux server sources it on start. Run install_plugins
+# against an isolated, throwaway server (private TMUX_TMPDIR) so it always reads
+# our freshly-installed config instead of attaching to a tmux server already
+# running on the machine: a stale/foreign server has that path unset, which makes
+# TPM abort with "not configured" — and under `set -e` that kills the whole
+# install (e.g. when re-running the installer from inside an existing tmux).
 install_tpm() {
   if ! [ -d "$HOME/.tmux/plugins/tpm" ]; then
     git clone --depth=1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
   fi
-  "$HOME/.tmux/plugins/tpm/bin/install_plugins"
+  local tpm_sock
+  tpm_sock="$(mktemp -d)"
+  TMUX_TMPDIR="$tpm_sock" "$HOME/.tmux/plugins/tpm/bin/install_plugins"
+  TMUX_TMPDIR="$tpm_sock" tmux kill-server 2>/dev/null || true
+  rm -rf "$tpm_sock"
 }
 
 # Install the pinned Go toolchain from the official tarball. This is the
