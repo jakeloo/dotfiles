@@ -14,7 +14,8 @@ curl -fsSL https://raw.githubusercontent.com/jakeloo/dotfiles/master/install-mac
 ## Layout
 
 - [`versions.env`](versions.env) — pinned tool versions (Go, Node, Python, Rust,
-  Neovim), shared by both installers. Bump once, both OSes pick it up.
+  Neovim, 1Password CLI), shared by both installers. Bump once, both OSes pick it
+  up.
 - [`lib/common.sh`](lib/common.sh) — shared install steps (config copy, tmux/nvim
   plugins, Go, gopls, Node, Python, Rust). Each `install-*.sh` only handles what
   is genuinely OS-specific (package manager + toolchain bootstrap).

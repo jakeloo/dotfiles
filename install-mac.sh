@@ -86,6 +86,7 @@ main() {
   install_gopls
   install_node
   install_agents
+  install_op
   install_python
   install_rust
   install_nvim_plugins
