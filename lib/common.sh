@@ -110,6 +110,28 @@ install_agents() {
   fi
 }
 
+# Install the pinned 1Password CLI (`op`) from the official standalone zip.
+# Same artifact layout on macOS and Linux — only the os/arch in the URL differs,
+# and both match go_os/go_arch's naming — so it lives here as one source of
+# truth. Lands in ~/.local/bin (already on PATH); 1Password ships signed,
+# notarized binaries so the macOS one runs without a Gatekeeper prompt. The
+# guard skips the re-download once the pinned version is already installed.
+install_op() {
+  export PATH="$HOME/.local/bin:$PATH"
+  if command -v op >/dev/null 2>&1 && [ "$(op --version 2>/dev/null)" = "$OP_VERSION" ]; then
+    return 0
+  fi
+
+  local os arch
+  os="$(go_os)"
+  arch="$(go_arch)"
+  curl -fsSLo /tmp/op.zip "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_${os}_${arch}_v${OP_VERSION}.zip"
+  rm -rf /tmp/op-extract
+  unzip -qo /tmp/op.zip -d /tmp/op-extract
+  mkdir -p "$HOME/.local/bin"
+  install -m 0755 /tmp/op-extract/op "$HOME/.local/bin/op"
+}
+
 # Pin Python via uv. Assumes `uv` is already on PATH.
 install_python() {
   export PATH="$HOME/.local/bin:$PATH"
