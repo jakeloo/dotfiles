@@ -104,6 +104,8 @@ main() {
 
   echo "Run: Connecting tailscale. \`tailscale up\`"
   echo "Run: Set ZSH default shell. \`chsh -s $(which zsh)\`"
+  echo "Run: Provision CLI access (gh, 1Password, Claude, Codex, Tailscale):"
+  echo "     bash <(curl -fsSL https://raw.githubusercontent.com/jakeloo/dotfiles/${DOTFILES_REF}/setup-access.sh)"
 }
 
 main "$@"
