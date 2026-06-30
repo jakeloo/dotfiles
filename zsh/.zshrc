@@ -98,8 +98,8 @@ aws-mfa() {
   fi
 
   local token="$1"
-  local account="${2:-016609318326}"
-  local username="${3:-thirdweb-jakeloo}"
+  local account="$2"
+  local username="$3"
 
   eval $(aws sts get-session-token \
     --serial-number "arn:aws:iam::${account}:mfa/${username}" \
