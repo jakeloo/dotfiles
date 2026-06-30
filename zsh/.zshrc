@@ -6,17 +6,21 @@ if [[ "$(uname -r)" =~ Microsoft$ ]]; then
   umask 0022
 fi
 
-# Force a UTF-8 locale so tmux and others render unicode without needing `tmux -u`.
-# Modern tmux detects UTF-8 solely from the locale, so the fix lives here, not in tmux.conf.
-if ! locale 2>/dev/null | grep -qiE 'utf-?8'; then
-  if locale -a 2>/dev/null | grep -qix 'en_US.UTF-8'; then
-    export LANG='en_US.UTF-8'
-  elif locale -a 2>/dev/null | grep -qix 'C.UTF-8'; then
-    export LANG='C.UTF-8'
-  else
-    export LANG='en_US.UTF-8'
-  fi
-  export LC_CTYPE="$LANG"
+# Force a working UTF-8 locale so tmux and zsh's line editor render unicode
+# (e.g. the git prompt's branch glyph) instead of \M- byte escapes.
+# A LANG that merely *names* UTF-8 can still be invalid when that locale was
+# never generated (common on minimal VMs); glibc then silently falls back to
+# C/ASCII. So probe the actual charmap rather than trusting the variable string.
+if [ "$(locale charmap 2>/dev/null)" != "UTF-8" ]; then
+  for _utf8_cand in "$LANG" en_US.UTF-8 C.UTF-8 C.utf8; do
+    [ -n "$_utf8_cand" ] || continue
+    if [ "$(LC_ALL=$_utf8_cand locale charmap 2>/dev/null)" = "UTF-8" ]; then
+      export LANG="$_utf8_cand"
+      export LC_CTYPE="$_utf8_cand"
+      break
+    fi
+  done
+  unset _utf8_cand
 fi
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
